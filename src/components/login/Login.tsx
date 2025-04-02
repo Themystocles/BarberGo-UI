@@ -1,16 +1,34 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+
+
 
 const Login = () => {
-    useEffect(() => {
-        // Adiciona overflow-hidden no body para remover as barras de rolagem
-        document.body.style.overflow = 'hidden';
+    const { login, error, successMessage } = useAuth();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
-        // Limpa a configuração de overflow ao sair da tela
+
+
+    useEffect(() => {
+        document.body.style.overflow = "hidden";
         return () => {
-            document.body.style.overflow = '';
+            document.body.style.overflow = "";
         };
     }, []);
+    const navigate = useNavigate();
 
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const isSuccessful = await login(email, password);
+        if (isSuccessful) {
+            setTimeout(() => {
+                navigate("/teste");
+            }, 2000);
+        }
+    };
     return (
         <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-gray-800 to-gray-900">
             <div className="flex w-full max-w-6xl bg-white rounded-lg shadow-2xl overflow-hidden">
@@ -27,25 +45,40 @@ const Login = () => {
                 {/* Formulário de login à direita */}
                 <div className="w-1/2 p-10">
                     <h2 className="text-4xl font-bold text-gray-800 text-center mb-8">Bem-vindo de volta</h2>
-                    <form className="space-y-6">
+
+                    {/* Mensagem de erro */}
+                    {error && <p className="text-red-600 text-center">{error}</p>}
+
+                    {/* Mensagem de sucesso */}
+                    {successMessage && <p className="text-green-600 text-center">{successMessage}</p>}
+
+                    <form className="space-y-6" onSubmit={handleSubmit}>
                         <div>
-                            <label htmlFor="email" className="block text-gray-700">E-mail</label>
+                            <label htmlFor="email" className="block text-gray-700">
+                                E-mail
+                            </label>
                             <input
                                 type="email"
                                 id="email"
                                 placeholder="Digite seu e-mail"
                                 className="w-full p-4 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                 required
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
                         <div>
-                            <label htmlFor="password" className="block text-gray-700">Senha</label>
+                            <label htmlFor="password" className="block text-gray-700">
+                                Senha
+                            </label>
                             <input
                                 type="password"
                                 id="password"
                                 placeholder="Digite sua senha"
                                 className="w-full p-4 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                 required
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
                             />
                         </div>
                         <button
@@ -57,7 +90,10 @@ const Login = () => {
                     </form>
 
                     <p className="text-center text-sm text-gray-600 mt-6">
-                        Não tem uma conta? <a href="#" className="text-indigo-600 hover:underline">Cadastre-se</a>
+                        Não tem uma conta?{" "}
+                        <Link to="/registration" className="text-indigo-600 hover:underline">
+                            Cadastre-se
+                        </Link>
                     </p>
                 </div>
             </div>

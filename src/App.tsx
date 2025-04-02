@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import AppRoutes from './components/routes/Routes'; // Importando as rotas
+import AppRoutes from './components/routes/Routes';
 
 function App() {
-  const [count, setCount] = useState(0);
+
 
   return (
     <>
-
       <AppRoutes />
+
     </>
   );
 }
