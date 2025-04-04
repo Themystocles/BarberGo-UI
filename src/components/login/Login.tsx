@@ -9,6 +9,7 @@ const Login = () => {
     const { login, error, successMessage } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
 
 
@@ -22,11 +23,14 @@ const Login = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsLoading(true);
         const isSuccessful = await login(email, password);
         if (isSuccessful) {
             setTimeout(() => {
-                navigate("/teste");
+                navigate("/Home");
             }, 2000);
+        } else {
+            setIsLoading(false);
         }
     };
     return (
@@ -81,12 +85,19 @@ const Login = () => {
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                         </div>
-                        <button
-                            type="submit"
-                            className="w-full py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        >
-                            Entrar
-                        </button>
+
+                        {isLoading ? (
+                            <div className="flex justify-center">
+                                <div className="animate-spin rounded-full h-8 w-8 border-t-4 border-b-4 border-indigo-600"></div>
+                            </div>
+                        ) : (
+                            <button
+                                type="submit"
+                                className="w-full py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            >
+                                Entrar
+                            </button>
+                        )}
                     </form>
 
                     <p className="text-center text-sm text-gray-600 mt-6">
@@ -99,6 +110,6 @@ const Login = () => {
             </div>
         </div>
     );
-};
+}
 
 export default Login;
