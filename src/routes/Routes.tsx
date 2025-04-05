@@ -1,11 +1,10 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-
 import Login from "../components/login/Login";
-import Teste from "../components/home/Home";
 import PrivateRoute from "./PrivateRoute";
 import Registrator from "../components/login/Registrator";
 import Home from "../components/home/Home";
+import Perfil from "../components/perfil/Perfil";
 
 const AppRoutes = () => {
     return (
@@ -19,10 +18,8 @@ const AppRoutes = () => {
                 <Route path="/registration" element={<Registrator />} />
 
                 {/* Página privada */}
-                <Route
-                    path="/Home"
-                    element={<PrivateRoute element={<Home />} />}
-                />
+                <Route path="/Home" element={<PrivateRoute element={<Home />} />} />
+                <Route path="/perfil" element={<PrivateRoute element={<Perfil />} />} />
             </Routes>
         </Router>
     );

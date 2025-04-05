@@ -4,6 +4,8 @@ import { GiScissors } from "react-icons/gi"; // Ícone de tesoura
 import { FaCalendarAlt, FaUser, FaSignOutAlt } from "react-icons/fa";
 import { useAuth } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import Header from "../header/Header";
+
 
 
 
@@ -15,29 +17,8 @@ const Home = () => {
     return (
         <div className="min-h-screen bg-gradient-to-r from-gray-800 to-gray-900 text-white flex flex-col">
             {/* Header */}
-            <header className="flex justify-between items-center p-6 bg-gray-900 shadow-lg">
-                <h1 className="text-3xl font-bold">Barbearia Barba Negra</h1>
-                <nav className="flex gap-4">
-                    <Link to="/agendamentos" className="hover:text-indigo-400 transition duration-300">
-                        Agendamentos
-                    </Link>
-                    <Link to="/clientes" className="hover:text-indigo-400 transition duration-300">
-                        Clientes
-                    </Link>
-                    <Link to="/perfil" className="hover:text-indigo-400 transition duration-300">
-                        Perfil
-                    </Link>
-                    <button
-                        onClick={() => {
-                            logout();
-                            navigate("/login");
-                        }}
-                        className="flex items-center gap-2 hover:text-red-500 transition duration-300"
-                    >
-                        <FaSignOutAlt /> Sair
-                    </button>
-                </nav>
-            </header>
+
+            <Header />
 
             {/* Conteúdo Principal */}
             <main className="flex-1 flex flex-col items-center justify-center text-center px-4">
@@ -80,7 +61,7 @@ const Home = () => {
             <footer className="text-center p-4 text-sm text-gray-400 bg-gray-900">
                 © 2025 Barbearia Barba Negra. Todos os direitos reservados.
             </footer>
-        </div>
+        </div >
     );
 };
 
