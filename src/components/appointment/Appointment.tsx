@@ -11,6 +11,7 @@ const Appointment = () => {
     useEffect(() => {
         const fetchAgendamentos = async () => {
             try {
+                const token = localStorage.getItem("token");
                 const response = await axios.get("https://localhost:7032/api/Appointment/Agendamentos");
                 setAgendamentos(response.data);
             } catch (error) {

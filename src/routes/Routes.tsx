@@ -6,6 +6,7 @@ import Registrator from "../components/login/Registrator";
 import Home from "../components/home/Home";
 import Perfil from "../components/perfil/Perfil";
 import Appointment from "../components/appointment/Appointment";
+import SchedulesConfig from "../components/admConfig/SchedulesConfig"
 
 const AppRoutes = () => {
     return (
@@ -22,6 +23,7 @@ const AppRoutes = () => {
                 <Route path="/Home" element={<PrivateRoute element={<Home />} />} />
                 <Route path="/perfil" element={<PrivateRoute element={<Perfil />} />} />
                 <Route path="/agendamentos" element={<PrivateRoute element={<Appointment />} />} />
+                <Route path="/ConfiguraçãoHorarios" element={<PrivateRoute element={<SchedulesConfig />} />} />
 
             </Routes>
         </Router>
