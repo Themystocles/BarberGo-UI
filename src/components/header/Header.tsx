@@ -1,7 +1,7 @@
 import { useAuth } from "../../hooks/useAuth";
 import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useState, useRef } from "react";
-import { FaSignOutAlt, FaChevronDown } from "react-icons/fa";
+import { FaSignOutAlt, FaChevronDown, FaHome } from "react-icons/fa";
 import axios from "axios";
 
 const Header = () => {
@@ -44,12 +44,18 @@ const Header = () => {
 
     return (
         <header className="flex justify-between items-center px-8 py-4 bg-gray-900 text-white shadow-md">
-            <h1 className="text-2xl font-bold">Barbearia Barba Negra</h1>
+
+            <div
+                className="flex items-center gap-2 cursor-pointer hover:text-cyan-400 transition"
+                onClick={() => navigate("/Home")}
+            >
+                <FaHome className="text-xl" />
+                <h1 className="text-2xl font-bold">Barbearia Barba Negra</h1>
+            </div>
 
             <div className="flex items-center gap-6 relative" ref={dropdownRef}>
                 {name && (
                     <div className="flex items-center gap-3 cursor-pointer" onClick={() => setDropdownOpen(!dropdownOpen)}>
-                        {/* Foto de perfil */}
                         {profilePictureUrl ? (
                             <img
                                 src={profilePictureUrl}
@@ -67,7 +73,6 @@ const Header = () => {
                     </div>
                 )}
 
-                {/* Dropdown estilizado */}
                 {dropdownOpen && (
                     <div className="absolute right-20 top-12 bg-gray-800 text-white shadow-lg rounded-md py-2 w-48 z-50 border border-gray-700">
                         <Link
@@ -101,7 +106,6 @@ const Header = () => {
                     </div>
                 )}
 
-                {/* Logout */}
                 <button
                     onClick={() => {
                         logout();

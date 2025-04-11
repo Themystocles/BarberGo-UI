@@ -7,6 +7,7 @@ import Home from "../components/home/Home";
 import Perfil from "../components/perfil/Perfil";
 import Appointment from "../components/appointment/Appointment";
 import SchedulesConfig from "../components/admConfig/SchedulesConfig"
+import ScheduleConfirmation from "../components/appointment/ScheduleConfirmation";
 
 const AppRoutes = () => {
     return (
@@ -24,6 +25,7 @@ const AppRoutes = () => {
                 <Route path="/perfil" element={<PrivateRoute element={<Perfil />} />} />
                 <Route path="/agendamentos" element={<PrivateRoute element={<Appointment />} />} />
                 <Route path="/ConfiguraçãoHorarios" element={<PrivateRoute element={<SchedulesConfig />} />} />
+                <Route path="/ConfirmarHorario" element={<PrivateRoute element={<ScheduleConfirmation />} />} />
 
             </Routes>
         </Router>
