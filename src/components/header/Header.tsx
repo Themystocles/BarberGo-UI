@@ -97,7 +97,7 @@ const Header = () => {
                             Perfil
                         </Link>
                         <Link
-                            to="/ConfiguraçãoHorarios"
+                            to="/AgendaSemanal"
                             className="block px-4 py-2 hover:bg-indigo-500 transition"
                             onClick={() => setDropdownOpen(false)}
                         >

@@ -27,7 +27,7 @@ const SchedulesConfig = () => {
         e.preventDefault();
         try {
             const token = localStorage.getItem("token");
-            await axios.post("https://localhost:7032/api/WeeklySchedule/create", formData, {
+            await axios.post("https://localhost:7032/api/WeeklySchedule/create-weekly", formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

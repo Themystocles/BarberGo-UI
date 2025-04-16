@@ -8,6 +8,9 @@ import Perfil from "../components/perfil/Perfil";
 import Appointment from "../components/appointment/Appointment";
 import SchedulesConfig from "../components/admConfig/SchedulesConfig"
 import ScheduleConfirmation from "../components/appointment/ScheduleConfirmation";
+import WeeklyScheduleComponent from "../components/admConfig/WeeklyScheduleComponent";
+
+
 
 const AppRoutes = () => {
     return (
@@ -26,6 +29,10 @@ const AppRoutes = () => {
                 <Route path="/agendamentos" element={<PrivateRoute element={<Appointment />} />} />
                 <Route path="/ConfiguraçãoHorarios" element={<PrivateRoute element={<SchedulesConfig />} />} />
                 <Route path="/ConfirmarHorario" element={<PrivateRoute element={<ScheduleConfirmation />} />} />
+                <Route path="/AgendaSemanal" element={<PrivateRoute element={<WeeklyScheduleComponent />} />} />
+
+
+                WeeklySchedule
 
             </Routes>
         </Router>
