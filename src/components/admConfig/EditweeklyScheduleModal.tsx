@@ -40,7 +40,7 @@ const EditweeklyScheduleModal: React.FC<EditweeklyScheduleModalProps> = ({ item,
             }
 
             const response = await axios.put(
-                `https://localhost:7032/api/WeeklySchedule/update/${item.id}`,
+                `https://localhost:7032/api/WeeklySchedule/updateOv/${item.id}`,
                 updatedSchedule,
                 {
                     headers: {

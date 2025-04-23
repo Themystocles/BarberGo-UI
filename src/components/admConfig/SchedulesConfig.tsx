@@ -25,17 +25,34 @@ const SchedulesConfig = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setMensagem(""); // limpa mensagem anterior
         try {
             const token = localStorage.getItem("token");
-            await axios.post("https://localhost:7032/api/WeeklySchedule/create-weekly", formData, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            setMensagem("Horário cadastrado com sucesso!");
-        } catch (error) {
+
+            const response = await axios.post(
+                "https://localhost:7032/api/WeeklySchedule/create-weekly",
+                formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    validateStatus: status => status < 500 // deixa o axios lançar erro só pra 5xx
+                }
+            );
+
+            if (response.status === 200 || response.status === 201) {
+                setMensagem("Horário cadastrado com sucesso!");
+            } else {
+                setMensagem(response.data?.message || "Erro ao cadastrar.");
+            }
+
+        } catch (error: any) {
             console.error("Erro ao cadastrar horário:", error);
-            setMensagem("Erro ao cadastrar.");
+            if (axios.isAxiosError(error) && error.response) {
+                setMensagem(error.response.data?.message || "Erro de validação.");
+            } else {
+                setMensagem("Erro ao cadastrar.");
+            }
         }
     };
 
