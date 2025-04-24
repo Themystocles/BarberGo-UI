@@ -7,16 +7,40 @@ const Appointment = () => {
     const [agendamentos, setAgendamentos] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split("T")[0]);
+    const [barber, setBarber] = useState<number | undefined>();
+    const [barbersList, setBarbersList] = useState<{ id: number; name: string }[]>([]);
 
     const navigate = useNavigate();
 
+    // Buscar barbeiros na montagem
+    useEffect(() => {
+        const fetchBarbers = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const response = await axios.get("https://localhost:7032/api/WeeklySchedule/barbers",
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }
+                );
+                setBarbersList(response.data);
+            } catch (error) {
+                console.error("Erro ao buscar barbeiros:", error);
+            }
+        };
+
+        fetchBarbers();
+    }, []);
+
+    // Buscar horários disponíveis quando a data ou barbeiro mudar
     useEffect(() => {
         const fetchAgendamentos = async () => {
+            if (!barber) return;
+
             try {
                 setLoading(true);
                 const token = localStorage.getItem("token");
                 const response = await axios.get(
-                    `https://localhost:7032/api/WeeklySchedule/available-slots?date=${selectedDate}`,
+                    `https://localhost:7032/api/WeeklySchedule/available-slots?date=${selectedDate}&barberId=${barber}`,
                     {
                         headers: { Authorization: `Bearer ${token}` },
                     }
@@ -24,18 +48,20 @@ const Appointment = () => {
                 setAgendamentos(response.data);
             } catch (error) {
                 console.error("Erro ao buscar agendamentos:", error);
+                setAgendamentos([]);
             } finally {
                 setLoading(false);
             }
         };
 
         fetchAgendamentos();
-    }, [selectedDate]);
+    }, [selectedDate, barber]);
 
+    // Ao clicar em um horário
     const handleHorarioClick = (horario: string) => {
         const dataHoraCompleta = `${selectedDate}T${horario}`;
         navigate("/ConfirmarHorario", {
-            state: { dateTime: dataHoraCompleta }
+            state: { dateTime: dataHoraCompleta },
         });
     };
 
@@ -46,12 +72,29 @@ const Appointment = () => {
                 <div className="w-full max-w-5xl flex flex-col gap-6">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <h2 className="text-3xl font-bold">Agendamentos</h2>
-                        <input
-                            type="date"
-                            value={selectedDate}
-                            onChange={(e) => setSelectedDate(e.target.value)}
-                            className="bg-gray-700 text-white text-sm px-3 py-2 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-                        />
+
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <select
+                                value={barber ?? ""}
+                                onChange={(e) => setBarber(Number(e.target.value))}
+                                required
+                                className="bg-gray-700 text-white text-sm px-3 py-2 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                            >
+                                <option value="">Selecione um barbeiro</option>
+                                {barbersList.map((b) => (
+                                    <option key={b.id} value={b.id}>
+                                        {b.name}
+                                    </option>
+                                ))}
+                            </select>
+
+                            <input
+                                type="date"
+                                value={selectedDate}
+                                onChange={(e) => setSelectedDate(e.target.value)}
+                                className="bg-gray-700 text-white text-sm px-3 py-2 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                            />
+                        </div>
                     </div>
 
                     <div>
@@ -74,7 +117,7 @@ const Appointment = () => {
                                 })}
                             </div>
                         ) : (
-                            <p className="text-gray-400">Nenhum horário disponível para a data selecionada.</p>
+                            <p className="text-gray-400">Nenhum horário disponível para a data e barbeiro selecionados.</p>
                         )}
                     </div>
                 </div>
