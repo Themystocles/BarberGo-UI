@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { WeeklySchedule } from "../../interfaces/WeeklySchedule";
+import { IAppUser } from "../../interfaces/AppUser";
 
 const SchedulesConfig = () => {
+    const [barberId, setBarberId] = useState<IAppUser>();
     const [formData, setFormData] = useState<Omit<WeeklySchedule, "id" | "barber">>({
         dayOfWeek: 0,
         startTime: "",
         endTime: "",
         intervalMinutes: 0,
-        barberId: undefined,
+        barberId: barberId?.Id,
     });
 
     const [mensagem, setMensagem] = useState("");
@@ -28,17 +30,33 @@ const SchedulesConfig = () => {
         setMensagem(""); // limpa mensagem anterior
         try {
             const token = localStorage.getItem("token");
+            const responseUser = await axios.get("https://localhost:7032/api/AppUser/profile", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+
+            });
+            const user = responseUser.data;
+            setBarberId(user);
+
+            const updatedFormData = {
+                ...formData,
+                barberId: user.id,
+            };
+
 
             const response = await axios.post(
                 "https://localhost:7032/api/WeeklySchedule/create-weekly",
-                formData,
+                updatedFormData,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
-                    validateStatus: status => status < 500 // deixa o axios lançar erro só pra 5xx
+                    validateStatus: status => status < 500
                 }
             );
+
+
 
             if (response.status === 200 || response.status === 201) {
                 setMensagem("Horário cadastrado com sucesso!");
@@ -113,16 +131,7 @@ const SchedulesConfig = () => {
                         />
                     </div>
 
-                    <div>
-                        <label className="block mb-1 font-medium">ID do Barbeiro (opcional)</label>
-                        <input
-                            type="number"
-                            name="barberId"
-                            value={formData.barberId ?? ""}
-                            onChange={handleChange}
-                            className="w-full bg-gray-700 text-white border border-gray-600 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        />
-                    </div>
+
 
                     <button
                         type="submit"
