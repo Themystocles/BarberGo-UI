@@ -10,7 +10,7 @@ const SchedulesConfig = () => {
         startTime: "",
         endTime: "",
         intervalMinutes: 0,
-        barberId: barberId?.Id,
+        barberId: barberId?.id,
     });
 
     const [mensagem, setMensagem] = useState("");

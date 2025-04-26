@@ -4,11 +4,14 @@ import { Link } from "react-router-dom";
 import { FaClock, FaEdit, FaPlus } from "react-icons/fa";
 import axios from "axios";
 import EditweeklyScheduleModal from "../admConfig/EditweeklyScheduleModal";
+import { IAppUser } from "../../interfaces/AppUser";
 
 const WeeklyScheduleComponent = () => {
     const [data, setData] = useState<WeeklySchedule[]>([]);
     const [showModal, setShowModal] = useState(false);
     const [selectedItem, setSelectedItem] = useState<WeeklySchedule | null>(null);
+    const [barberId, setBarberId] = useState<number | null>(null); // Agora é só o número
+
     const dayNames: Record<number, string> = {
         1: "Segunda-feira",
         2: "Terça-feira",
@@ -22,10 +25,33 @@ const WeeklyScheduleComponent = () => {
     const daysOrder = [1, 2, 3, 4, 5, 6, 7];
 
     useEffect(() => {
-        const fetchWeeklySchedule = async () => {
+        const fetchUser = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const response = await axios.get("https://localhost:7032/api/WeeklySchedule", {
+                const responseUser = await axios.get<IAppUser>("https://localhost:7032/api/AppUser/profile", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                setBarberId(responseUser.data.id);
+            } catch (error) {
+                console.error("Erro ao buscar usuário:", error);
+            }
+        };
+
+        fetchUser();
+    }, []);
+
+    useEffect(() => {
+        const fetchWeeklySchedule = async () => {
+            if (!barberId) {
+                console.log("barberId não está definido corretamente:", barberId);
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem("token");
+                const response = await axios.get(`https://localhost:7032/api/WeeklySchedule/weeklySchedule/${barberId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -37,15 +63,13 @@ const WeeklyScheduleComponent = () => {
         };
 
         fetchWeeklySchedule();
-    }, []);
+    }, [barberId]);
 
-    // Função para abrir o modal com o horário selecionado
     const handleEditClick = (item: WeeklySchedule) => {
         setSelectedItem(item);
         setShowModal(true);
     };
 
-    // Função para fechar o modal
     const handleCloseModal = () => {
         setShowModal(false);
         setSelectedItem(null);
@@ -93,7 +117,7 @@ const WeeklyScheduleComponent = () => {
                                                 <button
                                                     className="p-1 text-indigo-400 hover:text-indigo-200 transition"
                                                     title="Editar horário"
-                                                    onClick={() => handleEditClick(item)} // Abre o modal de edição
+                                                    onClick={() => handleEditClick(item)}
                                                     style={{ background: "transparent", border: "none", outline: "none" }}
                                                 >
                                                     <FaEdit />
@@ -119,7 +143,6 @@ const WeeklyScheduleComponent = () => {
                 })}
             </div>
 
-            {/* Exibindo o modal */}
             {showModal && selectedItem && (
                 <EditweeklyScheduleModal item={selectedItem} onClose={handleCloseModal} />
             )}

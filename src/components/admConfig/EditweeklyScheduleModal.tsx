@@ -26,10 +26,12 @@ const EditweeklyScheduleModal: React.FC<EditweeklyScheduleModalProps> = ({ item,
         setErrorMessage(null);
 
         const updatedSchedule = {
+            id: item.id,
             dayOfWeek: item.dayOfWeek,
             startTime: formatTime(startTime),
             endTime: formatTime(endTime),
             intervalMinutes: item.intervalMinutes,
+            barberId: item.barberId
         };
 
         try {
