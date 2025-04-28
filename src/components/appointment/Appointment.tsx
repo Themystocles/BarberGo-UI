@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "../header/Header";
 import { useNavigate } from "react-router-dom";
+import { IAppUser } from "../../interfaces/AppUser";
+
 
 const Appointment = () => {
     const [agendamentos, setAgendamentos] = useState<string[]>([]);
@@ -9,6 +11,9 @@ const Appointment = () => {
     const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split("T")[0]);
     const [barber, setBarber] = useState<number | undefined>();
     const [barbersList, setBarbersList] = useState<{ id: number; name: string }[]>([]);
+    const [idUser, setIdUser] = useState<IAppUser | any>();
+    const selectedBarber = barbersList.find((b) => b.id === barber);
+
 
     const navigate = useNavigate();
 
@@ -45,6 +50,16 @@ const Appointment = () => {
                         headers: { Authorization: `Bearer ${token}` },
                     }
                 );
+                const user = await axios.get("https://localhost:7032/api/AppUser/profile", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+
+                });
+
+
+
+                setIdUser(user.data.id)
                 setAgendamentos(response.data);
             } catch (error) {
                 console.error("Erro ao buscar agendamentos:", error);
@@ -61,7 +76,14 @@ const Appointment = () => {
     const handleHorarioClick = (horario: string) => {
         const dataHoraCompleta = `${selectedDate}T${horario}`;
         navigate("/ConfirmarHorario", {
-            state: { dateTime: dataHoraCompleta },
+            state: {
+                dateTime: dataHoraCompleta,
+                barberId: barber,
+                barbername: selectedBarber?.name ?? "",
+                userId: idUser,
+
+
+            },
         });
     };
 
