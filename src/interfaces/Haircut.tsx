@@ -3,4 +3,5 @@ export interface Haircut {
     name: string;
     preco: number;
     duracao: string;
+    imagePath: string
 }

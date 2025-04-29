@@ -47,7 +47,7 @@ const Home = () => {
                     </Link>
 
                     <Link
-                        to="/servicos"
+                        to="/CortesDisponíveis"
                         className="bg-indigo-600 hover:bg-indigo-700 transition p-6 rounded-2xl shadow-lg flex flex-col items-center justify-center"
                     >
                         <GiScissors size={40} className="mb-4" />
