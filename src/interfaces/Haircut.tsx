@@ -1,5 +1,5 @@
 export interface Haircut {
-    id: number;
+    id?: number;
     name: string;
     preco: number;
     duracao: string;

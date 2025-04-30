@@ -11,6 +11,7 @@ import ScheduleConfirmation from "../components/appointment/ScheduleConfirmation
 import WeeklyScheduleComponent from "../components/admConfig/WeeklyScheduleComponent";
 import Haircuts from "../components/haircuts/HaircutsComponent";
 import HaircutsComponent from "../components/haircuts/HaircutsComponent";
+import CreateHairCuts from "../components/haircuts/CreateHairCuts";
 
 
 
@@ -33,9 +34,10 @@ const AppRoutes = () => {
                 <Route path="/ConfirmarHorario" element={<PrivateRoute element={<ScheduleConfirmation />} />} />
                 <Route path="/AgendaSemanal" element={<PrivateRoute element={<WeeklyScheduleComponent />} />} />
                 <Route path="/CortesDisponíveis" element={<PrivateRoute element={<HaircutsComponent />} />} />
+                <Route path="/NovoCorte" element={<PrivateRoute element={<CreateHairCuts />} />} />
 
 
-                WeeklySchedule
+
 
             </Routes>
         </Router>

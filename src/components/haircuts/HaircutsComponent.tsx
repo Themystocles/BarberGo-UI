@@ -30,7 +30,7 @@ const HaircutsComponent = () => {
                 <h2 className="text-3xl font-bold mb-6">Cortes Disponíveis</h2>
 
                 <Link
-                    to="/cadastrar-corte"
+                    to="/NovoCorte"
                     className="mb-8 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 transition rounded-xl shadow-md font-semibold"
                 >
                     Cadastrar Novo Corte
