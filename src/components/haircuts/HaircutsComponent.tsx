@@ -3,9 +3,12 @@ import { Haircut } from "../../interfaces/Haircut";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import Header from "../header/Header";
+import UpdateHaircutModal from "../haircuts/UpdateHairCutModal"
 
 const HaircutsComponent = () => {
     const [haircuts, setHaircuts] = useState<Haircut[]>([]);
+    const [showModal, setShowModal] = useState(false);
+    const [selectedHaircut, setSelectedHaircut] = useState<Haircut | null>(null);
 
     useEffect(() => {
         const fetchHaircuts = async () => {
@@ -23,10 +26,20 @@ const HaircutsComponent = () => {
         fetchHaircuts();
     }, []);
 
-    return (
-        <> <Header />
-            <div className="min-h-screen bg-gradient-to-r from-gray-800 to-gray-900 text-white flex flex-col items-center py-10 px-4">
+    const openModal = (haircut: Haircut) => {
+        setSelectedHaircut(haircut);
+        setShowModal(true);
+    };
 
+    const closeModal = () => {
+        setSelectedHaircut(null);
+        setShowModal(false);
+    };
+
+    return (
+        <>
+            <Header />
+            <div className="min-h-screen bg-gradient-to-r from-gray-800 to-gray-900 text-white flex flex-col items-center py-10 px-4">
                 <h2 className="text-3xl font-bold mb-6">Cortes Disponíveis</h2>
 
                 <Link
@@ -52,10 +65,36 @@ const HaircutsComponent = () => {
                             <h3 className="text-xl font-semibold">{h.name}</h3>
                             <p className="text-gray-300 mt-2">Duração: {h.duracao} min</p>
                             <p className="text-gray-300">Preço: R$ {h.preco.toFixed(2)}</p>
+
+                            <button
+                                onClick={() => openModal(h)}
+                                className="mt-4 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 transition rounded-xl font-semibold"
+                            >
+                                Editar
+                            </button>
                         </div>
                     ))}
                 </div>
             </div>
+
+            {/* Modal real */}
+            {showModal && selectedHaircut && (
+                <UpdateHaircutModal
+                    haircut={selectedHaircut}
+                    onClose={closeModal}
+                    onUpdated={() => {
+                        // atualiza a lista após editar
+                        setShowModal(false);
+                        setSelectedHaircut(null);
+                        // fetch novamente
+                        axios.get("https://localhost:7032/api/Haircuts", {
+                            headers: {
+                                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                            },
+                        }).then(res => setHaircuts(res.data));
+                    }}
+                />
+            )}
         </>
     );
 };

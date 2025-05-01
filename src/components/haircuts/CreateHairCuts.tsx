@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { Haircut } from "../../interfaces/Haircut";
+import Header from "../header/Header";
 
 const CreateHairCuts = () => {
     const [formData, setFormData] = useState<Haircut>({
@@ -36,7 +37,6 @@ const CreateHairCuts = () => {
             });
 
             const result = await res.json();
-            console.log(result);
             setFormData(prev => ({
                 ...prev,
                 imagePath: result.secure_url
@@ -79,57 +79,77 @@ const CreateHairCuts = () => {
     };
 
     return (
-        <div>
-            <h4>Cadastrar novo corte</h4>
-            <form onSubmit={e => { e.preventDefault(); createcut(); }}>
-                <div>
-                    <input
-                        type="text"
-                        placeholder="Nome"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-
-                <div>
-                    <input
-                        type="number"
-                        placeholder="Preço"
-                        name="preco"
-                        value={formData.preco}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-
-                <div>
-                    <input
-                        type="time"
-                        placeholder="Duração"
-                        name="duracao"
-                        value={formData.duracao}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-
-                <div>
-                    <input type="file" accept="image/*" onChange={handleImageUpload} />
-                    {uploading && <p>Enviando imagem...</p>}
-                    {formData.imagePath && (
-                        <div style={{ marginTop: 10 }}>
-                            <img src={formData.imagePath} alt="Preview" width={150} />
+        <>
+            <Header />
+            <div className="min-h-screen bg-gradient-to-r from-gray-800 to-gray-900 text-white flex justify-center items-center px-4 py-10">
+                <div className="bg-gray-700 p-8 rounded-2xl shadow-xl w-full max-w-lg">
+                    <h2 className="text-3xl font-bold mb-6 text-center">Cadastrar Novo Corte</h2>
+                    <form onSubmit={e => { e.preventDefault(); createcut(); }} className="space-y-6">
+                        <div>
+                            <label className="block text-sm mb-1">Nome</label>
+                            <input
+                                type="text"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleChange}
+                                className="w-full p-3 rounded-xl bg-gray-600 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                placeholder="Nome do corte"
+                                required
+                            />
                         </div>
-                    )}
-                </div>
 
-                <button type="submit" disabled={uploading || !formData.imagePath}>
-                    {uploading ? "Enviando imagem..." : "Cadastrar"}
-                </button>
-            </form>
-        </div>
+                        <div>
+                            <label className="block text-sm mb-1">Preço</label>
+                            <input
+                                type="number"
+                                name="preco"
+                                value={formData.preco}
+                                onChange={handleChange}
+                                className="w-full p-3 rounded-xl bg-gray-600 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                placeholder="Preço em R$"
+                                required
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm mb-1">Duração</label>
+                            <input
+                                type="time"
+                                name="duracao"
+                                value={formData.duracao}
+                                onChange={handleChange}
+                                className="w-full p-3 rounded-xl bg-gray-600 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                required
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm mb-1">Imagem do corte</label>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageUpload}
+                                className="w-full text-sm text-gray-300"
+                            />
+                            {uploading && <p className="mt-2 text-yellow-400">Enviando imagem...</p>}
+                            {formData.imagePath && (
+                                <div className="mt-4">
+                                    <img src={formData.imagePath} alt="Preview" className="rounded-xl max-w-full h-40 object-contain mx-auto" />
+                                </div>
+                            )}
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={uploading || !formData.imagePath}
+                            className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 transition rounded-xl shadow-md font-semibold disabled:opacity-50"
+                        >
+                            {uploading ? "Enviando imagem..." : "Cadastrar Corte"}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </>
     );
 };
 
