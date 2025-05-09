@@ -6,6 +6,8 @@ import DeleteHaircut from "./DeleteHaircut";
 
 const UpdateHaircutModal = ({ haircut, onClose, onUpdated }: UpdateHaircutModalProps) => {
     const [formData, setFormData] = useState<Haircut>({ ...haircut });
+    const [showbtnsave, setShowbtnsave] = useState<boolean>(true);
+    const [showcancel, setShowcancel] = useState<boolean>(true)
 
 
     const handleSubmit = async () => {
@@ -64,23 +66,34 @@ const UpdateHaircutModal = ({ haircut, onClose, onUpdated }: UpdateHaircutModalP
                 </div>
 
                 <div className="flex justify-end mt-6 gap-3">
-                    <button
-                        onClick={onClose}
-                        className="px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded-xl text-white font-medium"
-                    >
-                        Cancelar
-                    </button>
-                    <button
-                        onClick={handleSubmit}
-                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-white font-semibold"
-                    >
-                        Salvar
-                    </button>
+                    {showcancel &&
+                        <button
+                            onClick={onClose}
+                            className="px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded-xl text-white font-medium"
+                        >
+                            Cancelar
+                        </button>
+                    }
+                    {showbtnsave &&
+                        <button
+                            onClick={handleSubmit}
+                            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-white font-semibold"
+                        >
+                            Salvar
+                        </button>
+                    }
                     <DeleteHaircut
                         haircutId={formData.id!}
+                        showbtnsave={() =>
+                            setShowbtnsave(false)
+                        }
+                        showcancel={() =>
+                            setShowcancel(false)
+                        }
                         onDeleted={() => {
                             onUpdated();
                             onClose();
+
                         }}
                     />
 

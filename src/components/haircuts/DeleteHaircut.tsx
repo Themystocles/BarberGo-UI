@@ -1,18 +1,36 @@
 import { use, useState } from "react"
 import { Haircut } from "../../interfaces/Haircut";
+import axios from "axios";
 
 interface DeleteHaircutProps {
     haircutId: number;
     onDeleted: () => void;
+    showbtnsave: () => void;
+    showcancel: () => void;
 }
 
-const DeleteHaircut = ({ haircutId, onDeleted }: DeleteHaircutProps) => {
+const DeleteHaircut = ({ haircutId, onDeleted, showbtnsave, showcancel }: DeleteHaircutProps) => {
     const [showbutonDelete, setshowbutonDelete] = useState<boolean>(true);
-
     const [confirmdelete, setConfirmdelete] = useState<boolean>(false);
 
-    const handleclick = () => {
+    const handleclick = async () => {
+
+        try {
+            var token = localStorage.getItem("token")
+            await axios.delete(`https://localhost:7032/api/Haircuts/delete/${haircutId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+
+            })
+        } catch {
+            console.error("Ocorreu um erro ao deletar o corte.");
+
+        }
+
+
+
+
         setConfirmdelete(true)
+
 
 
 
@@ -20,6 +38,7 @@ const DeleteHaircut = ({ haircutId, onDeleted }: DeleteHaircutProps) => {
 
     }
     const buttoncancelar = () => {
+
         onDeleted();
     }
 
@@ -30,6 +49,8 @@ const DeleteHaircut = ({ haircutId, onDeleted }: DeleteHaircutProps) => {
                 onClick={() => {
                     setConfirmdelete(true);
                     setshowbutonDelete(false);
+                    showbtnsave();
+                    showcancel();
                 }}
             >
                 Deletar Corte

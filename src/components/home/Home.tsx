@@ -38,7 +38,7 @@ const Home = () => {
                     </Link>
 
                     <Link
-                        to="/clientes"
+                        to="/Clientes_do_dia"
                         className="bg-indigo-600 hover:bg-indigo-700 transition p-6 rounded-2xl shadow-lg flex flex-col items-center justify-center"
                     >
                         <FaUser size={40} className="mb-4" />
