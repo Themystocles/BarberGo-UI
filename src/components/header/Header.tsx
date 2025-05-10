@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useState, useRef } from "react";
 import { FaSignOutAlt, FaChevronDown, FaHome } from "react-icons/fa";
 import axios from "axios";
+import useUser from "../../hooks/useUser";
 
 const Header = () => {
     const { logout } = useAuth();
@@ -11,7 +12,9 @@ const Header = () => {
     const [profilePictureUrl, setProfilePictureUrl] = useState<string>("");
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const { userType } = useUser();
 
+    console.log(userType)
     const getNameUser = async () => {
         try {
             const token = localStorage.getItem("token");
@@ -82,13 +85,15 @@ const Header = () => {
                         >
                             Agendamentos
                         </Link>
-                        <Link
-                            to="/clientes"
-                            className="block px-4 py-2 hover:bg-indigo-500 transition"
-                            onClick={() => setDropdownOpen(false)}
-                        >
-                            Clientes
-                        </Link>
+                        {userType == 1 &&
+                            <Link
+                                to="/clientes"
+                                className="block px-4 py-2 hover:bg-indigo-500 transition"
+                                onClick={() => setDropdownOpen(false)}
+                            >
+                                Clientes
+                            </Link>
+                        }
                         <Link
                             to="/perfil"
                             className="block px-4 py-2 hover:bg-indigo-500 transition"
@@ -96,13 +101,15 @@ const Header = () => {
                         >
                             Perfil
                         </Link>
-                        <Link
-                            to="/AgendaSemanal"
-                            className="block px-4 py-2 hover:bg-indigo-500 transition"
-                            onClick={() => setDropdownOpen(false)}
-                        >
-                            Administração
-                        </Link>
+                        {userType == 1 &&
+                            <Link
+                                to="/AgendaSemanal"
+                                className="block px-4 py-2 hover:bg-indigo-500 transition"
+                                onClick={() => setDropdownOpen(false)}
+                            >
+                                Administração
+                            </Link>
+                        }
                     </div>
                 )}
 

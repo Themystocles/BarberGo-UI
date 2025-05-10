@@ -50,6 +50,7 @@ const Perfil = () => {
                             <p className="text-lg"><span className="font-semibold">Email:</span> {user.email}</p>
                             {user.phone && <p className="text-lg"><span className="font-semibold">Telefone:</span> {user.phone}</p>}
                             <p className="text-lg"><span className="font-semibold">Data de Criação:</span> {new Date(user.createdAt).toLocaleDateString("pt-BR")}</p>
+                            <p className="text-lg"><span className="font-semibold">Permissão: </span> {user.type === 1 ? "Administrador" : "Usuário"}</p>
                         </div>
 
                         <div className="mt-6 flex flex-col sm:flex-row gap-4 flex-wrap">

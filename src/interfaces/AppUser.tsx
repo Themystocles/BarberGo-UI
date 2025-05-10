@@ -7,6 +7,7 @@ export interface IAppUser {
     googleId?: string;
     profilePictureUrl?: string;
     createdAt: string;
+    type?: number
 
 }
 
