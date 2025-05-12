@@ -46,7 +46,7 @@ const Header = () => {
     }, []);
 
     return (
-        <header className="flex justify-between items-center px-8 py-4 bg-gray-900 text-white shadow-md">
+        <header className="flex justify-between items-center px-8 py-4 bg-gray-900 text-white shadow-md bg-opacity-90">
 
             <div
                 className="flex items-center gap-2 cursor-pointer hover:text-cyan-400 transition"

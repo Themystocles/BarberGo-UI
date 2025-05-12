@@ -3,9 +3,13 @@ import axios from "axios";
 import Header from "../header/Header";
 import { useNavigate } from "react-router-dom";
 import { IAppUser } from "../../interfaces/AppUser";
+import { useLocation } from "react-router-dom";
+
 
 
 const Appointment = () => {
+    const location = useLocation();
+    const { barberId } = location.state || {};
     const [agendamentos, setAgendamentos] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split("T")[0]);
@@ -16,6 +20,14 @@ const Appointment = () => {
 
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (barberId && barbersList.length > 0) {
+            setBarber(barberId);
+        }
+    }, [barberId, barbersList]);
+
+
 
     // Buscar barbeiros na montagem
     useEffect(() => {
@@ -95,7 +107,10 @@ const Appointment = () => {
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <h2 className="text-3xl font-bold">Agendamentos</h2>
 
+
+
                         <div className="flex flex-col sm:flex-row gap-4">
+
                             <select
                                 value={barber ?? ""}
                                 onChange={(e) => setBarber(Number(e.target.value))}

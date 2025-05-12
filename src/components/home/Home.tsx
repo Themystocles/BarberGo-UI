@@ -1,27 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { GiScissors } from "react-icons/gi"; // Ícone de tesoura
-import { FaCalendarAlt, FaUser, FaSignOutAlt } from "react-icons/fa";
+import { GiScissors } from "react-icons/gi";
+import { FaCalendarAlt, FaUser } from "react-icons/fa";
 import { useAuth } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import Header from "../header/Header";
-
-
-
+import useUser from "../../hooks/useUser";
 
 const Home = () => {
-
     const { logout } = useAuth();
     const navigate = useNavigate();
+    const { userType } = useUser();
 
     return (
-        <div className="min-h-screen bg-gradient-to-r from-gray-800 to-gray-900 text-white flex flex-col">
+        <div
+            className="min-h-screen bg-cover bg-center text-white flex flex-col"
+            style={{ backgroundImage: "url('https://i.pinimg.com/originals/19/26/6e/19266e1b4e9597fc43dc5cb056d3100b.jpg')" }}
+        >
             {/* Header */}
-
             <Header />
 
             {/* Conteúdo Principal */}
-            <main className="flex-1 flex flex-col items-center justify-center text-center px-4">
+            <main className="flex-1 flex flex-col items-center justify-center text-center px-4 bg-black bg-opacity-60">
                 <h2 className="text-4xl font-bold mb-4">Bem-vindo ao sistema da Barbearia</h2>
                 <p className="text-lg text-gray-300 mb-10">
                     Gerencie seus agendamentos, clientes e serviços com facilidade.
@@ -37,14 +37,25 @@ const Home = () => {
                         <p className="text-gray-200 text-sm mt-2">Visualize e organize horários</p>
                     </Link>
 
-                    <Link
-                        to="/Clientes_do_dia"
-                        className="bg-indigo-600 hover:bg-indigo-700 transition p-6 rounded-2xl shadow-lg flex flex-col items-center justify-center"
-                    >
-                        <FaUser size={40} className="mb-4" />
-                        <h3 className="text-xl font-semibold">Clientes</h3>
-                        <p className="text-gray-200 text-sm mt-2">Gerencie sua clientela</p>
-                    </Link>
+                    {userType ? (
+                        <Link
+                            to="/Clientes_do_dia"
+                            className="bg-indigo-600 hover:bg-indigo-700 transition p-6 rounded-2xl shadow-lg flex flex-col items-center justify-center"
+                        >
+                            <FaUser size={40} className="mb-4" />
+                            <h3 className="text-xl font-semibold">Clientes</h3>
+                            <p className="text-gray-200 text-sm mt-2">Gerencie sua clientela</p>
+                        </Link>
+                    ) : (
+                        <Link
+                            to="/Barbeiros"
+                            className="bg-indigo-600 hover:bg-indigo-700 transition p-6 rounded-2xl shadow-lg flex flex-col items-center justify-center"
+                        >
+                            <FaUser size={40} className="mb-4" />
+                            <h3 className="text-xl font-semibold">Barbeiros</h3>
+                            <p className="text-gray-200 text-sm mt-2">Conheça os Barbeiros</p>
+                        </Link>
+                    )}
 
                     <Link
                         to="/CortesDisponíveis"
@@ -58,10 +69,10 @@ const Home = () => {
             </main>
 
             {/* Rodapé */}
-            <footer className="text-center p-4 text-sm text-gray-400 bg-gray-900">
+            <footer className="text-center p-4 text-sm text-gray-400 bg-gray-900 bg-opacity-90">
                 © 2025 Barbearia Barba Negra. Todos os direitos reservados.
             </footer>
-        </div >
+        </div>
     );
 };
 

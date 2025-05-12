@@ -13,6 +13,7 @@ import Haircuts from "../components/haircuts/HaircutsComponent";
 import HaircutsComponent from "../components/haircuts/HaircutsComponent";
 import CreateHairCuts from "../components/haircuts/CreateHairCuts";
 import Customers from "../components/customers/Customers";
+import Barbers from "../components/barbers/Barbers";
 
 
 
@@ -37,6 +38,7 @@ const AppRoutes = () => {
                 <Route path="/CortesDisponíveis" element={<PrivateRoute element={<HaircutsComponent />} />} />
                 <Route path="/NovoCorte" element={<PrivateRoute element={<CreateHairCuts />} />} />
                 <Route path="/Clientes_do_dia" element={<PrivateRoute element={<Customers />} />} />
+                <Route path="/Barbeiros" element={<PrivateRoute element={<Barbers />} />} />
 
 
 
