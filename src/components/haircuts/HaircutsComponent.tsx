@@ -4,11 +4,13 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import Header from "../header/Header";
 import UpdateHaircutModal from "../haircuts/UpdateHairCutModal"
+import useUser from "../../hooks/useUser";
 
 const HaircutsComponent = () => {
     const [haircuts, setHaircuts] = useState<Haircut[]>([]);
     const [showModal, setShowModal] = useState(false);
     const [selectedHaircut, setSelectedHaircut] = useState<Haircut | null>(null);
+    const { userType } = useUser();
 
     useEffect(() => {
         const fetchHaircuts = async () => {
@@ -41,14 +43,14 @@ const HaircutsComponent = () => {
             <Header />
             <div className="min-h-screen bg-gradient-to-r from-gray-800 to-gray-900 text-white flex flex-col items-center py-10 px-4">
                 <h2 className="text-3xl font-bold mb-6">Cortes Disponíveis</h2>
-
-                <Link
-                    to="/NovoCorte"
-                    className="mb-8 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 transition rounded-xl shadow-md font-semibold"
-                >
-                    Cadastrar Novo Corte
-                </Link>
-
+                {userType === 1 &&
+                    <Link
+                        to="/NovoCorte"
+                        className="mb-8 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 transition rounded-xl shadow-md font-semibold"
+                    >
+                        Cadastrar Novo Corte
+                    </Link>
+                }
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
                     {haircuts.map((h) => (
                         <div
@@ -65,13 +67,14 @@ const HaircutsComponent = () => {
                             <h3 className="text-xl font-semibold">{h.name}</h3>
                             <p className="text-gray-300 mt-2">Duração: {h.duracao} min</p>
                             <p className="text-gray-300">Preço: R$ {h.preco.toFixed(2)}</p>
-
-                            <button
-                                onClick={() => openModal(h)}
-                                className="mt-4 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 transition rounded-xl font-semibold"
-                            >
-                                Editar
-                            </button>
+                            {userType === 1 &&
+                                <button
+                                    onClick={() => openModal(h)}
+                                    className="mt-4 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 transition rounded-xl font-semibold"
+                                >
+                                    Editar
+                                </button>
+                            }
                         </div>
                     ))}
                 </div>

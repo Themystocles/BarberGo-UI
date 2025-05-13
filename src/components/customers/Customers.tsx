@@ -56,7 +56,7 @@ const Customers = () => {
                     {customers.map((c) => (
                         <div key={c.id} className="bg-gray-700 shadow-lg rounded-lg overflow-hidden">
                             <div className="p-4">
-                                <h3 className="text-xl font-semibold text-white mb-2">{c.clientname}</h3>
+                                <p className="text-gray-300">Nome: {c.clientName}</p>
                                 <p className="text-gray-300">Telefone: {c.clientPhone}</p>
                                 <p className="text-gray-300">Corte: {c.haircutName}</p>
                                 <p className="text-gray-300">Preço: R$ {c.haircutPreco}</p>
