@@ -14,6 +14,7 @@ import HaircutsComponent from "../components/haircuts/HaircutsComponent";
 import CreateHairCuts from "../components/haircuts/CreateHairCuts";
 import Customers from "../components/customers/Customers";
 import Barbers from "../components/barbers/Barbers";
+import LoginSuccess from "../components/login/LoginSuccess";
 
 
 
@@ -27,6 +28,7 @@ const AppRoutes = () => {
                 {/* Páginas públicas */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/registration" element={<Registrator />} />
+                <Route path="/login-success" element={<LoginSuccess />} />
 
                 {/* Página privada */}
                 <Route path="/Home" element={<PrivateRoute element={<Home />} />} />

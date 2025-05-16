@@ -2,16 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-
-
+import { FcGoogle } from "react-icons/fc";
 
 const Login = () => {
     const { login, error, successMessage } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-
-
+    const navigate = useNavigate();
 
     useEffect(() => {
         document.body.style.overflow = "hidden";
@@ -19,7 +17,6 @@ const Login = () => {
             document.body.style.overflow = "";
         };
     }, []);
-    const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -32,6 +29,40 @@ const Login = () => {
         } else {
             setIsLoading(false);
         }
+    };
+
+    // Função simples para abrir popup do login Google
+    const handleGoogleLogin = () => {
+        // URL da API que inicia o login com Google e redireciona para o consentimento Google
+        const googleLoginUrl = "https://localhost:7032/auth/google-login";
+
+        const width = 500;
+        const height = 600;
+        const left = window.innerWidth / 2 - width / 2;
+        const top = window.innerHeight / 2 - height / 2;
+
+        // Abrir popup centralizada
+        const popup = window.open(
+            googleLoginUrl,
+            "Login com Google",
+            `width=${width},height=${height},top=${top},left=${left}`
+        );
+
+        // Aqui você pode usar setInterval para ficar verificando se o popup foi fechado
+        const timer = setInterval(() => {
+            if (popup && popup.closed) {
+                clearInterval(timer);
+                // A popup fechou, então pode buscar o token armazenado (exemplo localStorage)
+                const token = localStorage.getItem("token"); // ou de onde você armazena
+                if (token) {
+                    // Atualiza seu contexto/auth state com o token
+                    // Depois redireciona para home
+                    navigate("/home");
+                } else {
+                    alert("Falha no login com Google");
+                }
+            }
+        }, 500);
     };
     return (
         <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-gray-800 to-gray-900">
@@ -48,13 +79,15 @@ const Login = () => {
 
                 {/* Formulário de login à direita */}
                 <div className="w-1/2 p-10">
-                    <h2 className="text-4xl font-bold text-gray-800 text-center mb-8">Bem-vindo de volta</h2>
+                    <h2 className="text-4xl font-bold text-gray-800 text-center mb-8">
+                        Bem-vindo de volta
+                    </h2>
 
-                    {/* Mensagem de erro */}
                     {error && <p className="text-red-600 text-center">{error}</p>}
 
-                    {/* Mensagem de sucesso */}
-                    {successMessage && <p className="text-green-600 text-center">{successMessage}</p>}
+                    {successMessage && (
+                        <p className="text-green-600 text-center">{successMessage}</p>
+                    )}
 
                     <form className="space-y-6" onSubmit={handleSubmit}>
                         <div>
@@ -100,6 +133,19 @@ const Login = () => {
                         )}
                     </form>
 
+                    {/* Botão simples e bonito de login Google */}
+                    <div className="mt-6 flex justify-center">
+                        <button
+                            onClick={handleGoogleLogin}
+                            disabled={isLoading}
+                            type="button"
+                            className="flex items-center gap-3 px-6 py-3 border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow bg-white text-gray-700 font-semibold hover:bg-gray-50"
+                        >
+                            <FcGoogle size={24} />
+                            Entrar com Google
+                        </button>
+                    </div>
+
                     <p className="text-center text-sm text-gray-600 mt-6">
                         Não tem uma conta?{" "}
                         <Link to="/registration" className="text-indigo-600 hover:underline">
@@ -110,6 +156,6 @@ const Login = () => {
             </div>
         </div>
     );
-}
+};
 
 export default Login;
