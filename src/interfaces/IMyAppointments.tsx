@@ -1,4 +1,4 @@
-export interface ICustomers {
+export interface IMyAppointments {
     id: number;
     clientName: string,
     clientPhone: string,
@@ -6,6 +6,7 @@ export interface ICustomers {
     haircutPreco: number,
     dateTime: string,
     status: string
+    barberName: string
 
 
 

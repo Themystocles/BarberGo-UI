@@ -78,13 +78,23 @@ const Header = () => {
 
                 {dropdownOpen && (
                     <div className="absolute right-20 top-12 bg-gray-800 text-white shadow-lg rounded-md py-2 w-48 z-50 border border-gray-700">
+
                         <Link
                             to="/agendamentos"
                             className="block px-4 py-2 hover:bg-indigo-500 transition"
                             onClick={() => setDropdownOpen(false)}
                         >
-                            Agendamentos
+                            Agendar Corte
                         </Link>
+                        {userType == 0 &&
+                            <Link
+                                to="/MeusAgendamentos"
+                                className="block px-4 py-2 hover:bg-indigo-500 transition"
+                                onClick={() => setDropdownOpen(false)}
+                            >
+                                Meus Agendamentos
+                            </Link>
+                        }
                         {userType == 1 &&
                             <Link
                                 to="/clientes"
@@ -101,6 +111,7 @@ const Header = () => {
                         >
                             Perfil
                         </Link>
+
                         {userType == 1 &&
                             <Link
                                 to="/AgendaSemanal"
@@ -110,6 +121,23 @@ const Header = () => {
                                 Administração
                             </Link>
                         }
+                        {userType == 0 &&
+
+                            <div
+                                onClick={() => {
+                                    logout();
+                                    navigate("/login");
+                                }}
+                                className="block px-4 py-2 hover:bg-indigo-500 transition"
+                            >
+                                Sair
+                            </div>
+
+                        }
+
+
+
+
                     </div>
                 )}
 

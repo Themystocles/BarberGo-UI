@@ -12,7 +12,7 @@ const ScheduleConfirmation = () => {
     const receivedIdUser = location.state?.userId ?? "";
     const receivedBarberName = location.state?.barbername ?? "";
 
-    const [imagehaircut, setImagehaircut] = useState<string>("");  // Para armazenar a URL da imagem
+    const [imagehaircut, setImagehaircut] = useState<string>("");
     const [Haircut, setHaircut] = useState<Haircut[]>([]);
     const [Haircutid, setHaircutid] = useState<number | undefined>(undefined);
 
@@ -72,7 +72,7 @@ const ScheduleConfirmation = () => {
             });
 
             alert("Agendamento confirmado com sucesso!");
-            navigate("/");
+            navigate("/Home");
         } catch (error) {
             console.error("Erro ao agendar:", error);
             alert("Erro ao confirmar agendamento.");
