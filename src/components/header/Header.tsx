@@ -88,16 +88,16 @@ const Header = () => {
                         </Link>
                         {userType == 0 &&
                             <Link
-                                to="/MeusAgendamentos"
+                                to="/Barbeiros"
                                 className="block px-4 py-2 hover:bg-indigo-500 transition"
                                 onClick={() => setDropdownOpen(false)}
                             >
-                                Meus Agendamentos
+                                Barbeiros
                             </Link>
                         }
                         {userType == 1 &&
                             <Link
-                                to="/clientes"
+                                to="/Clientes_do_dia"
                                 className="block px-4 py-2 hover:bg-indigo-500 transition"
                                 onClick={() => setDropdownOpen(false)}
                             >

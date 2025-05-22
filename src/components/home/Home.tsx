@@ -48,12 +48,12 @@ const Home = () => {
                         </Link>
                     ) : (
                         <Link
-                            to="/Barbeiros"
+                            to="/MeusAgendamentos"
                             className="bg-indigo-600 hover:bg-indigo-700 transition p-6 rounded-2xl shadow-lg flex flex-col items-center justify-center"
                         >
                             <FaUser size={40} className="mb-4" />
-                            <h3 className="text-xl font-semibold">Barbeiros</h3>
-                            <p className="text-gray-200 text-sm mt-2">Conheça os Barbeiros</p>
+                            <h3 className="text-xl font-semibold">Meus Agendamentos</h3>
+                            <p className="text-gray-200 text-sm mt-2">Consulte seus agendamentos</p>
                         </Link>
                     )}
 
