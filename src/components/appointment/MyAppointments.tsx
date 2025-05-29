@@ -1,12 +1,12 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { IAppUser } from "../../interfaces/AppUser";
+//import { IAppUser } from "../../interfaces/AppUser";
 import { IMyAppointments } from "../../interfaces/IMyAppointments";
 import Header from "../header/Header";
 import { useNavigate } from "react-router-dom";
 
 const MyAppointments = () => {
-    const [userLogged, setUserLogged] = useState<IAppUser>();
+    //const [userLogged, setUserLogged] = useState<IAppUser>();
     const [appointments, setAppointments] = useState<IMyAppointments[]>([]);
     const navigate = useNavigate();
 
@@ -14,16 +14,16 @@ const MyAppointments = () => {
         const fetchData = async () => {
             const token = localStorage.getItem("token");
 
-            const responseUser = await axios.get("https://localhost:7032/api/AppUser/profile", {
+            const responseUser = await axios.get("https://barbergo-api.onrender.com/api/AppUser/profile", {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 }
             });
 
             const user = responseUser.data;
-            setUserLogged(user);
+            // setUserLogged(user);
 
-            const responseAppointment = await axios.get(`https://localhost:7032/api/Appointment/appointments/${user.id}`, {
+            const responseAppointment = await axios.get(`https://barbergo-api.onrender.com/api/Appointment/appointments/${user.id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 }
@@ -41,7 +41,7 @@ const MyAppointments = () => {
 
         const token = localStorage.getItem("token");
 
-        await axios.delete(`https://localhost:7032/api/Appointment/delete/${id}`, {
+        await axios.delete(`https://barbergo-api.onrender.com/api/Appointment/delete/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             }

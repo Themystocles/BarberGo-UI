@@ -1,4 +1,4 @@
-import React from "react";
+
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Login from "../components/login/Login";
 import PrivateRoute from "./PrivateRoute";
@@ -9,7 +9,7 @@ import Appointment from "../components/appointment/Appointment";
 import SchedulesConfig from "../components/admConfig/SchedulesConfig"
 import ScheduleConfirmation from "../components/appointment/ScheduleConfirmation";
 import WeeklyScheduleComponent from "../components/admConfig/WeeklyScheduleComponent";
-import Haircuts from "../components/haircuts/HaircutsComponent";
+
 import HaircutsComponent from "../components/haircuts/HaircutsComponent";
 import CreateHairCuts from "../components/haircuts/CreateHairCuts";
 import Customers from "../components/customers/Customers";

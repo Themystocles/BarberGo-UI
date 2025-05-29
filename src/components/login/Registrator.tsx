@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 
 export default function UserRegistration() {
     const [user, setUser] = useState<IAppUser>({
+        id: 0,
         name: "",
         email: "",
         phone: "",
@@ -21,7 +22,7 @@ export default function UserRegistration() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await axios.post("https://localhost:7032/api/AppUser/create", user);
+            await axios.post("https://barbergo-api.onrender.com/api/AppUser/create", user);
             alert("Usuário cadastrado com sucesso!");
         } catch (error) {
             alert("Erro ao cadastrar usuário");

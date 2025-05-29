@@ -27,7 +27,7 @@ const ScheduleConfirmation = () => {
     const Haircuts = async () => {
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.get("https://localhost:7032/api/Haircuts", {
+            const response = await axios.get("https://barbergo-api.onrender.com/api/Haircuts", {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setHaircut(response.data);
@@ -67,7 +67,7 @@ const ScheduleConfirmation = () => {
 
         try {
             const token = localStorage.getItem("token");
-            await axios.post("https://localhost:7032/api/Appointment/create", form, {
+            await axios.post("https://barbergo-api.onrender.com/api/Appointment/create", form, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 

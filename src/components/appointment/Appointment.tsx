@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "../header/Header";
 import { useNavigate } from "react-router-dom";
@@ -34,7 +34,7 @@ const Appointment = () => {
         const fetchBarbers = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const response = await axios.get("https://localhost:7032/api/WeeklySchedule/barbers",
+                const response = await axios.get("https://barbergo-api.onrender.com/api/WeeklySchedule/barbers",
                     {
                         headers: { Authorization: `Bearer ${token}` },
                     }
@@ -57,12 +57,12 @@ const Appointment = () => {
                 setLoading(true);
                 const token = localStorage.getItem("token");
                 const response = await axios.get(
-                    `https://localhost:7032/api/WeeklySchedule/available-slots?date=${selectedDate}&barberId=${barber}`,
+                    `https://barbergo-api.onrender.com/api/WeeklySchedule/available-slots?date=${selectedDate}&barberId=${barber}`,
                     {
                         headers: { Authorization: `Bearer ${token}` },
                     }
                 );
-                const user = await axios.get("https://localhost:7032/api/AppUser/profile", {
+                const user = await axios.get("https://barbergo-api.onrender.com/api/AppUser/profile", {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -80,7 +80,6 @@ const Appointment = () => {
                 setLoading(false);
             }
         };
-
         fetchAgendamentos();
     }, [selectedDate, barber]);
 

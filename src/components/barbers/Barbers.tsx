@@ -13,7 +13,7 @@ const Barbers = () => {
         const fetchBarbers = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const response = await axios.get("https://localhost:7032/api/WeeklySchedule/barbers", {
+                const response = await axios.get("https://barbergo-api.onrender.com/api/WeeklySchedule/barbers", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setBarbersList(response.data);

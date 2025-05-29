@@ -1,15 +1,12 @@
-import React, { useState } from "react";
+
 import { Link } from "react-router-dom";
 import { GiScissors } from "react-icons/gi";
 import { FaCalendarAlt, FaUser } from "react-icons/fa";
-import { useAuth } from "../../hooks/useAuth";
-import { useNavigate } from "react-router-dom";
 import Header from "../header/Header";
 import useUser from "../../hooks/useUser";
 
 const Home = () => {
-    const { logout } = useAuth();
-    const navigate = useNavigate();
+
     const { userType } = useUser();
 
     return (

@@ -67,7 +67,7 @@ const CreateHairCuts = () => {
                 duracao: duracaoFormatada
             };
 
-            await axios.post("https://localhost:7032/api/Haircuts/create", dataToSend, {
+            await axios.post("https://barbergo-api.onrender.com/api/Haircuts/create", dataToSend, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 

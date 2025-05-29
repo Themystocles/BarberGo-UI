@@ -34,7 +34,7 @@ const Login = () => {
     // Função simples para abrir popup do login Google
     const handleGoogleLogin = () => {
         // URL da API que inicia o login com Google e redireciona para o consentimento Google
-        const googleLoginUrl = "https://localhost:7032/auth/google-login";
+        const googleLoginUrl = "https://barbergo-api.onrender.com/auth/google-login";
 
         const width = 500;
         const height = 600;

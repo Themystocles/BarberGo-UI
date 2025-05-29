@@ -13,14 +13,14 @@ const Customers = () => {
 
     const Listcustomers = async () => {
         const token = localStorage.getItem("token");
-        const responseUser = await axios.get("https://localhost:7032/api/AppUser/profile", {
+        const responseUser = await axios.get("https://barbergo-api.onrender.com/api/AppUser/profile", {
             headers: {
                 Authorization: `Bearer ${token}`,
             }
         });
         const user = responseUser.data.id;
 
-        const response = await axios.get(`https://localhost:7032/api/MyCustomers/ClientesDoDia/${user}?date=${datenow}`, {
+        const response = await axios.get(`https://barbergo-api.onrender.com/api/MyCustomers/ClientesDoDia/${user}?date=${datenow}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
         setCustomers(response.data);

@@ -12,7 +12,7 @@ const HistoryAppointment = () => {
     useEffect(() => {
         const getUserProfile = async () => {
             const token = localStorage.getItem("token");
-            const responseUser = await axios.get("https://localhost:7032/api/AppUser/profile", {
+            const responseUser = await axios.get("https://barbergo-api.onrender.com/api/AppUser/profile", {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -42,7 +42,7 @@ const HistoryAppointment = () => {
         };
 
         const response = await axios.get(
-            `https://localhost:7032/api/Appointment/Historyappointments/${userId}`,
+            `https://barbergo-api.onrender.com/api/Appointment/Historyappointments/${userId}`,
             config
         );
 

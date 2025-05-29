@@ -10,7 +10,7 @@ const Perfil = () => {
     const getUser = async () => {
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.get("https://localhost:7032/api/AppUser/profile", {
+            const response = await axios.get("https://barbergo-api.onrender.com/api/AppUser/profile", {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

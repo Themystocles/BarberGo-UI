@@ -16,7 +16,7 @@ const HaircutsComponent = () => {
         const fetchHaircuts = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const response = await axios.get("https://localhost:7032/api/Haircuts", {
+                const response = await axios.get("https://barbergo-api.onrender.com/api/Haircuts", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setHaircuts(response.data);
@@ -90,7 +90,7 @@ const HaircutsComponent = () => {
                         setShowModal(false);
                         setSelectedHaircut(null);
                         // fetch novamente
-                        axios.get("https://localhost:7032/api/Haircuts", {
+                        axios.get("https://barbergo-api.onrender.com/api/Haircuts", {
                             headers: {
                                 Authorization: `Bearer ${localStorage.getItem("token")}`,
                             },

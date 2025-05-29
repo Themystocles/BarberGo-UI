@@ -1,5 +1,5 @@
-import { use, useState } from "react"
-import { Haircut } from "../../interfaces/Haircut";
+import { useState } from "react"
+
 import axios from "axios";
 
 interface DeleteHaircutProps {
@@ -17,7 +17,7 @@ const DeleteHaircut = ({ haircutId, onDeleted, showbtnsave, showcancel }: Delete
 
         try {
             var token = localStorage.getItem("token")
-            await axios.delete(`https://localhost:7032/api/Haircuts/delete/${haircutId}`, {
+            await axios.delete(`https://barbergo-api.onrender.com/api/Haircuts/delete/${haircutId}`, {
                 headers: { Authorization: `Bearer ${token}` }
 
             })

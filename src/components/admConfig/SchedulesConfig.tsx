@@ -30,7 +30,7 @@ const SchedulesConfig = () => {
         setMensagem(""); // limpa mensagem anterior
         try {
             const token = localStorage.getItem("token");
-            const responseUser = await axios.get("https://localhost:7032/api/AppUser/profile", {
+            const responseUser = await axios.get("https://barbergo-api.onrender.com/api/AppUser/profile", {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -46,7 +46,7 @@ const SchedulesConfig = () => {
 
 
             const response = await axios.post(
-                "https://localhost:7032/api/WeeklySchedule/create-weekly",
+                "https://barbergo-api.onrender.com/api/WeeklySchedule/create-weekly",
                 updatedFormData,
                 {
                     headers: {

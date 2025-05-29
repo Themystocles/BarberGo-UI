@@ -14,7 +14,7 @@ const UpdateHaircutModal = ({ haircut, onClose, onUpdated }: UpdateHaircutModalP
 
         try {
             const token = localStorage.getItem("token");
-            await axios.put(`https://localhost:7032/api/Haircuts/update/${formData.id}`, formData, {
+            await axios.put(`https://barbergo-api.onrender.com/api/Haircuts/update/${formData.id}`, formData, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 

@@ -11,7 +11,7 @@ const useUser = () => {
             try {
                 const token = localStorage.getItem("token");
                 if (token) {
-                    const response = await axios.get("https://localhost:7032/api/AppUser/profile", {
+                    const response = await axios.get("https://barbergo-api.onrender.com/api/AppUser/profile", {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },

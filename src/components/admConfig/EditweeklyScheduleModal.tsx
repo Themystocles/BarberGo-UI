@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { WeeklySchedule } from "../../interfaces/WeeklySchedule";
 import axios from "axios";
 
@@ -42,7 +42,7 @@ const EditweeklyScheduleModal: React.FC<EditweeklyScheduleModalProps> = ({ item,
             }
 
             const response = await axios.put(
-                `https://localhost:7032/api/WeeklySchedule/updateOv/${item.id}`,
+                `https://barbergo-api.onrender.com/api/WeeklySchedule/updateOv/${item.id}`,
                 updatedSchedule,
                 {
                     headers: {
@@ -76,7 +76,7 @@ const EditweeklyScheduleModal: React.FC<EditweeklyScheduleModalProps> = ({ item,
                 }
 
                 const response = await axios.delete(
-                    `https://localhost:7032/api/WeeklySchedule/delete/${item.id}`,
+                    `https://barbergo-api.onrender.com/api/WeeklySchedule/delete/${item.id}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

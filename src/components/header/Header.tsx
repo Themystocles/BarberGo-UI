@@ -1,6 +1,6 @@
 import { useAuth } from "../../hooks/useAuth";
 import { Link, useNavigate } from "react-router-dom";
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { FaSignOutAlt, FaChevronDown, FaHome } from "react-icons/fa";
 import axios from "axios";
 import useUser from "../../hooks/useUser";
@@ -18,7 +18,7 @@ const Header = () => {
     const getNameUser = async () => {
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.get("https://localhost:7032/api/AppUser/profile", {
+            const response = await axios.get("https://barbergo-api.onrender.com/api/AppUser/profile", {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

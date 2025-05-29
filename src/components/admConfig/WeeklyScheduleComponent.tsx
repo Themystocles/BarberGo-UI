@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { WeeklySchedule } from "../../interfaces/WeeklySchedule";
 import { Link } from "react-router-dom";
 import { FaClock, FaEdit, FaPlus } from "react-icons/fa";
@@ -29,7 +29,7 @@ const WeeklyScheduleComponent = () => {
         const fetchUser = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const responseUser = await axios.get<IAppUser>("https://localhost:7032/api/AppUser/profile", {
+                const responseUser = await axios.get<IAppUser>("https://barbergo-api.onrender.com/api/AppUser/profile", {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -52,7 +52,7 @@ const WeeklyScheduleComponent = () => {
 
             try {
                 const token = localStorage.getItem("token");
-                const response = await axios.get(`https://localhost:7032/api/WeeklySchedule/weeklySchedule/${barberId}`, {
+                const response = await axios.get(`https://barbergo-api.onrender.com/api/WeeklySchedule/weeklySchedule/${barberId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
