@@ -17,7 +17,7 @@ const LoginSuccess = () => {
                 window.close();
             } else {
                 // Se não for popup, redireciona para home normalmente
-                navigate("/home");
+                navigate("/Home");
             }
         } else {
             // Se não veio token, volta para login
