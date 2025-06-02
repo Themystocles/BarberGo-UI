@@ -31,29 +31,29 @@ export default function UserRegistration() {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-gray-800 to-gray-900">
-            <div className="flex w-full max-w-6xl bg-white rounded-lg shadow-2xl overflow-hidden">
-                {/* Foto à esquerda */}
-                <div className="w-1/2 relative">
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-gray-800 to-gray-900 p-4">
+            <div className="flex flex-col md:flex-row w-full max-w-4xl bg-white rounded-lg shadow-2xl overflow-hidden">
+                {/* Imagem da barbearia */}
+                <div className="hidden md:block md:w-1/2 relative">
                     <img
                         src="https://d2zdpiztbgorvt.cloudfront.net/region1/br/293956/biz_photo/394459b035ce4205a0ddb43a053874-barbearia-barba-negra-biz-photo-567f5ccdfb0a401690edd11f14ad92-booksy.jpeg"
                         alt="Imagem de barbearia"
                         className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-black opacity-40 rounded-lg"></div>
+                    <div className="absolute inset-0 bg-black opacity-40 rounded-l-lg"></div>
                 </div>
 
-                {/* Formulário de cadastro à direita */}
-                <div className="w-1/2 p-10">
-                    <h2 className="text-4xl font-bold text-gray-800 text-center mb-8">Criar Conta</h2>
-                    <form className="space-y-6" onSubmit={handleSubmit}>
+                {/* Formulário */}
+                <div className="w-full md:w-1/2 p-8 md:p-10">
+                    <h2 className="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-6">Criar Conta</h2>
+                    <form className="space-y-5" onSubmit={handleSubmit}>
                         <div>
                             <label className="block text-gray-700">Nome</label>
                             <input
                                 type="text"
                                 name="name"
                                 placeholder="Digite seu nome"
-                                className="w-full p-4 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="w-full p-3 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                 required
                                 value={user.name}
                                 onChange={handleChange}
@@ -65,7 +65,7 @@ export default function UserRegistration() {
                                 type="email"
                                 name="email"
                                 placeholder="Digite seu e-mail"
-                                className="w-full p-4 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="w-full p-3 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                 required
                                 value={user.email}
                                 onChange={handleChange}
@@ -77,7 +77,7 @@ export default function UserRegistration() {
                                 type="tel"
                                 name="phone"
                                 placeholder="Digite seu telefone"
-                                className="w-full p-4 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="w-full p-3 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                 value={user.phone}
                                 onChange={handleChange}
                             />
@@ -88,7 +88,7 @@ export default function UserRegistration() {
                                 type="password"
                                 name="passwordHash"
                                 placeholder="Digite sua senha"
-                                className="w-full p-4 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="w-full p-3 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                 required
                                 value={user.passwordHash}
                                 onChange={handleChange}
@@ -101,8 +101,8 @@ export default function UserRegistration() {
                             Cadastrar
                         </button>
                     </form>
-                    <p className="text-center text-sm text-gray-600 mt-6">
-                        Já tem uma conta? {" "}
+                    <p className="text-center text-sm text-gray-600 mt-5">
+                        Já tem uma conta?{" "}
                         <Link to="/login" className="text-indigo-600 hover:underline">
                             Faça login
                         </Link>
