@@ -65,7 +65,8 @@ const Login = () => {
         }, 500);
     };
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-gray-800 to-gray-900 px-4">
+        <div className="flex items-center justify-center h-screen md:min-h-screen bg-gradient-to-r from-gray-800 to-gray-900">
+
             <div className="flex flex-col md:flex-row w-full max-w-6xl bg-white rounded-lg shadow-2xl overflow-hidden">
                 {/* Foto à esquerda */}
                 <div className="w-full md:w-1/2 relative h-64 md:h-auto">
