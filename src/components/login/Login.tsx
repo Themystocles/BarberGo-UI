@@ -65,31 +65,30 @@ const Login = () => {
         }, 500);
     };
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-gray-800 to-gray-900">
-            <div className="flex w-full max-w-6xl bg-white rounded-lg shadow-2xl overflow-hidden">
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-gray-800 to-gray-900 px-4">
+            <div className="flex flex-col md:flex-row w-full max-w-6xl bg-white rounded-lg shadow-2xl overflow-hidden">
                 {/* Foto à esquerda */}
-                <div className="w-1/2 relative">
+                <div className="w-full md:w-1/2 relative h-64 md:h-auto">
                     <img
                         src="https://d2zdpiztbgorvt.cloudfront.net/region1/br/293956/biz_photo/394459b035ce4205a0ddb43a053874-barbearia-barba-negra-biz-photo-567f5ccdfb0a401690edd11f14ad92-booksy.jpeg"
                         alt="Imagem de barbearia"
                         className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-black opacity-40 rounded-lg"></div>
+                    <div className="absolute inset-0 bg-black opacity-40 md:rounded-l-lg"></div>
                 </div>
 
                 {/* Formulário de login à direita */}
-                <div className="w-1/2 p-10">
-                    <h2 className="text-4xl font-bold text-gray-800 text-center mb-8">
+                <div className="w-full md:w-1/2 p-6 md:p-10">
+                    <h2 className="text-2xl md:text-4xl font-bold text-gray-800 text-center mb-6">
                         Bem-vindo de volta
                     </h2>
 
                     {error && <p className="text-red-600 text-center">{error}</p>}
-
                     {successMessage && (
                         <p className="text-green-600 text-center">{successMessage}</p>
                     )}
 
-                    <form className="space-y-6" onSubmit={handleSubmit}>
+                    <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
                         <div>
                             <label htmlFor="email" className="block text-gray-700">
                                 E-mail
@@ -98,7 +97,7 @@ const Login = () => {
                                 type="email"
                                 id="email"
                                 placeholder="Digite seu e-mail"
-                                className="w-full p-4 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="w-full p-3 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                 required
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
@@ -112,7 +111,7 @@ const Login = () => {
                                 type="password"
                                 id="password"
                                 placeholder="Digite sua senha"
-                                className="w-full p-4 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="w-full p-3 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                 required
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
@@ -133,13 +132,12 @@ const Login = () => {
                         )}
                     </form>
 
-                    {/* Botão simples e bonito de login Google */}
                     <div className="mt-6 flex justify-center">
                         <button
                             onClick={handleGoogleLogin}
                             disabled={isLoading}
                             type="button"
-                            className="flex items-center gap-3 px-6 py-3 border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow bg-white text-gray-700 font-semibold hover:bg-gray-50"
+                            className="flex items-center gap-3 px-5 py-3 border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow bg-white text-gray-700 font-semibold hover:bg-gray-50"
                         >
                             <FcGoogle size={24} />
                             Entrar com Google
@@ -156,6 +154,6 @@ const Login = () => {
             </div>
         </div>
     );
-};
+}
 
 export default Login;
