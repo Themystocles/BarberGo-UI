@@ -1,23 +1,22 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "../header/Header";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { IAppUser } from "../../interfaces/AppUser";
-import { useLocation } from "react-router-dom";
-
-
+import { AlertCircle } from "lucide-react";
 
 const Appointment = () => {
     const location = useLocation();
     const { barberId } = location.state || {};
     const [agendamentos, setAgendamentos] = useState<string[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split("T")[0]);
+    const [loading, setLoading] = useState(false);
+    const [selectedDate, setSelectedDate] = useState<string>(
+        new Date().toISOString().split("T")[0]
+    );
     const [barber, setBarber] = useState<number | undefined>();
     const [barbersList, setBarbersList] = useState<{ id: number; name: string }[]>([]);
     const [idUser, setIdUser] = useState<IAppUser | any>();
     const selectedBarber = barbersList.find((b) => b.id === barber);
-
 
     const navigate = useNavigate();
 
@@ -27,14 +26,12 @@ const Appointment = () => {
         }
     }, [barberId, barbersList]);
 
-
-
-    // Buscar barbeiros na montagem
     useEffect(() => {
         const fetchBarbers = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const response = await axios.get("https://barbergo-api.onrender.com/api/WeeklySchedule/barbers",
+                const response = await axios.get(
+                    "https://barbergo-api.onrender.com/api/WeeklySchedule/barbers",
                     {
                         headers: { Authorization: `Bearer ${token}` },
                     }
@@ -48,10 +45,12 @@ const Appointment = () => {
         fetchBarbers();
     }, []);
 
-    // Buscar horários disponíveis quando a data ou barbeiro mudar
     useEffect(() => {
         const fetchAgendamentos = async () => {
-            if (!barber) return;
+            if (!barber) {
+                setAgendamentos([]);
+                return;
+            }
 
             try {
                 setLoading(true);
@@ -63,15 +62,10 @@ const Appointment = () => {
                     }
                 );
                 const user = await axios.get("https://barbergo-api.onrender.com/api/AppUser/profile", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-
+                    headers: { Authorization: `Bearer ${token}` },
                 });
 
-
-
-                setIdUser(user.data.id)
+                setIdUser(user.data.id);
                 setAgendamentos(response.data);
             } catch (error) {
                 console.error("Erro ao buscar agendamentos:", error);
@@ -83,7 +77,6 @@ const Appointment = () => {
         fetchAgendamentos();
     }, [selectedDate, barber]);
 
-    // Ao clicar em um horário
     const handleHorarioClick = (horario: string) => {
         const dataHoraCompleta = `${selectedDate}T${horario}`;
         navigate("/ConfirmarHorario", {
@@ -92,8 +85,6 @@ const Appointment = () => {
                 barberId: barber,
                 barbername: selectedBarber?.name ?? "",
                 userId: idUser,
-
-
             },
         });
     };
@@ -105,11 +96,7 @@ const Appointment = () => {
                 <div className="w-full max-w-5xl flex flex-col gap-6">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <h2 className="text-3xl font-bold">Agendamentos</h2>
-
-
-
                         <div className="flex flex-col sm:flex-row gap-4">
-
                             <select
                                 value={barber ?? ""}
                                 onChange={(e) => setBarber(Number(e.target.value))}
@@ -123,20 +110,57 @@ const Appointment = () => {
                                     </option>
                                 ))}
                             </select>
-
                             <input
                                 type="date"
                                 value={selectedDate}
                                 onChange={(e) => setSelectedDate(e.target.value)}
+                                min={new Date().toISOString().split("T")[0]}
                                 className="bg-gray-700 text-white text-sm px-3 py-2 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400"
                             />
                         </div>
                     </div>
 
+                    {!barber && (
+                        <div className="bg-yellow-100 text-yellow-800 px-4 py-3 rounded-md flex items-center gap-2 animate-pulse border border-yellow-300">
+                            <AlertCircle className="w-5 h-5" />
+                            <p className="text-sm font-medium">
+                                Selecione um barbeiro para visualizar os horários disponíveis.
+                            </p>
+                        </div>
+                    )}
+
                     <div>
-                        <h3 className="text-xl font-semibold mb-4 text-white">Horários Disponíveis</h3>
-                        {loading ? (
-                            <p className="text-gray-300">Carregando horários...</p>
+                        <h3 className="text-xl font-semibold mb-4 text-white">
+                            Horários Disponíveis
+                        </h3>
+
+                        {!barber ? (
+                            <p className="text-gray-400">
+                                Selecione um barbeiro para ver os horários disponíveis.
+                            </p>
+                        ) : loading ? (
+                            <div className="flex justify-center items-center h-[60vh]">
+                                <svg
+                                    className="animate-spin h-12 w-12 text-cyan-400"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <circle
+                                        className="opacity-25"
+                                        cx="12"
+                                        cy="12"
+                                        r="10"
+                                        stroke="currentColor"
+                                        strokeWidth="4"
+                                    ></circle>
+                                    <path
+                                        className="opacity-75"
+                                        fill="currentColor"
+                                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                    ></path>
+                                </svg>
+                            </div>
                         ) : agendamentos.length > 0 ? (
                             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                                 {agendamentos.map((item, index) => {
@@ -153,7 +177,9 @@ const Appointment = () => {
                                 })}
                             </div>
                         ) : (
-                            <p className="text-gray-400">Nenhum horário disponível para a data e barbeiro selecionados.</p>
+                            <p className="text-gray-400">
+                                Nenhum horário disponível para a data e barbeiro selecionados.
+                            </p>
                         )}
                     </div>
                 </div>
