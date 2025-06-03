@@ -22,7 +22,7 @@ const BarberHistory = () => {
             };
 
             const response = await axios.get(
-                `https://localhost:7032/api/Appointment/BarberHistoryappointments/${userId}`,
+                `https://barbergo-api.onrender.com/api/Appointment/BarberHistoryappointments/${userId}`,
                 config
             );
             setAppointments(response.data);
