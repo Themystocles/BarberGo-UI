@@ -9,7 +9,6 @@ import Appointment from "../components/appointment/Appointment";
 import SchedulesConfig from "../components/admConfig/SchedulesConfig"
 import ScheduleConfirmation from "../components/appointment/ScheduleConfirmation";
 import WeeklyScheduleComponent from "../components/admConfig/WeeklyScheduleComponent";
-
 import HaircutsComponent from "../components/haircuts/HaircutsComponent";
 import CreateHairCuts from "../components/haircuts/CreateHairCuts";
 import Customers from "../components/customers/Customers";
@@ -32,6 +31,7 @@ const AppRoutes = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/registration" element={<Registrator />} />
                 <Route path="/login-success" element={<LoginSuccess />} />
+                <Route path="/CortesDisponíveis" element={<PrivateRoute element={<HaircutsComponent />} />} />
 
                 {/* Página privada */}
                 <Route path="/Home" element={<PrivateRoute element={<Home />} />} />
@@ -40,7 +40,6 @@ const AppRoutes = () => {
                 <Route path="/ConfiguraçãoHorarios" element={<PrivateRoute element={<SchedulesConfig />} />} />
                 <Route path="/ConfirmarHorario" element={<PrivateRoute element={<ScheduleConfirmation />} />} />
                 <Route path="/AgendaSemanal" element={<PrivateRoute element={<WeeklyScheduleComponent />} />} />
-                <Route path="/CortesDisponíveis" element={<PrivateRoute element={<HaircutsComponent />} />} />
                 <Route path="/NovoCorte" element={<PrivateRoute element={<CreateHairCuts />} />} />
                 <Route path="/Clientes_do_dia" element={<PrivateRoute element={<Customers />} />} />
                 <Route path="/Barbeiros" element={<PrivateRoute element={<Barbers />} />} />
