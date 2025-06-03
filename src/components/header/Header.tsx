@@ -1,4 +1,4 @@
-import { useAuth } from "../../hooks/useAuth";
+
 import { Link, useNavigate } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
 import { FaSignOutAlt, FaChevronDown, FaHome } from "react-icons/fa";
