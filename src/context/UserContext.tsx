@@ -1,55 +1,74 @@
-import React, { createContext, useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 
 interface User {
     name: string;
     profilePictureUrl: string;
-    userType: number;
+    type: number;
 }
 
 interface UserContextType {
     user: User | null;
     loading: boolean;
-    error: string | null;
+    refreshUser: () => Promise<void>;
+    logoutUser: () => void; // adicionada função de logout
 }
 
-export const UserContext = createContext<UserContextType>({
-    user: null,
-    loading: true,
-    error: null,
-});
+const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+
+    const refreshUser = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                setUser(null);
+                setLoading(false);
+                return;
+            }
+            const response = await axios.get("https://barbergo-api.onrender.com/api/AppUser/profile", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            setUser({
+                name: response.data.name,
+                profilePictureUrl: response.data.profilePictureUrl,
+                type: response.data.type,
+            });
+        } catch (error) {
+            console.error("Erro ao buscar dados do usuário", error);
+            setUser(null);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Função para limpar usuário e token no logout
+    const logoutUser = () => {
+        setUser(null);
+        setLoading(false);
+        localStorage.removeItem("token");
+    };
 
     useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const token = localStorage.getItem("token");
-                if (!token) throw new Error("Token não encontrado");
-
-                const response = await axios.get("https://barbergo-api.onrender.com/api/AppUser/profile", {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-
-                setUser(response.data);
-                setError(null);
-            } catch (err) {
-                setError("Erro ao buscar dados do usuário");
-                setUser(null);
-            } finally {
-                setLoading(false); // MUITO IMPORTANTE: seta loading false SEMPRE!
-            }
-        };
-
-        fetchUser();
+        refreshUser();
     }, []);
 
     return (
-        <UserContext.Provider value={{ user, loading, error }}>
+        <UserContext.Provider value={{ user, loading, refreshUser, logoutUser }}>
             {children}
         </UserContext.Provider>
     );
+};
+
+export const useUserContext = () => {
+    const context = useContext(UserContext);
+    if (!context) {
+        throw new Error("useUserContext deve ser usado dentro de um UserProvider");
+    }
+    return context;
 };

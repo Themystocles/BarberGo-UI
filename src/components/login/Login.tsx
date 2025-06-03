@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
+import { useUserContext } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 
 const Login = () => {
     const { login, error, successMessage } = useAuth();
+    const { refreshUser } = useUserContext();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -23,6 +25,7 @@ const Login = () => {
         setIsLoading(true);
         const isSuccessful = await login(email, password);
         if (isSuccessful) {
+            await refreshUser();  // <-- Atualiza o usuário aqui!
             setTimeout(() => {
                 navigate("/Home");
             }, 2000);
@@ -31,9 +34,7 @@ const Login = () => {
         }
     };
 
-    // Função simples para abrir popup do login Google
     const handleGoogleLogin = () => {
-        // URL da API que inicia o login com Google e redireciona para o consentimento Google
         const googleLoginUrl = "https://barbergo-api.onrender.com/auth/google-login";
 
         const width = 500;
@@ -41,22 +42,18 @@ const Login = () => {
         const left = window.innerWidth / 2 - width / 2;
         const top = window.innerHeight / 2 - height / 2;
 
-        // Abrir popup centralizada
         const popup = window.open(
             googleLoginUrl,
             "Login com Google",
             `width=${width},height=${height},top=${top},left=${left}`
         );
 
-        // Aqui você pode usar setInterval para ficar verificando se o popup foi fechado
         const timer = setInterval(() => {
             if (popup && popup.closed) {
                 clearInterval(timer);
-                // A popup fechou, então pode buscar o token armazenado (exemplo localStorage)
-                const token = localStorage.getItem("token"); // ou de onde você armazena
+                const token = localStorage.getItem("token");
                 if (token) {
-                    // Atualiza seu contexto/auth state com o token
-                    // Depois redireciona para home
+                    refreshUser();  // Também aqui, depois do login Google
                     navigate("/home");
                 } else {
                     alert("Falha no login com Google");
@@ -64,10 +61,10 @@ const Login = () => {
             }
         }, 500);
     };
+
     return (
         <div className="flex items-center justify-center h-screen md:min-h-screen pt-0 bg-gradient-to-r from-gray-800 to-gray-900 px-4">
             <div className="flex flex-col md:flex-row w-full max-w-6xl bg-white rounded-lg shadow-2xl overflow-hidden">
-                {/* Foto à esquerda */}
                 <div className="w-full md:w-1/2 relative h-64 md:h-auto">
                     <img
                         src="https://d2zdpiztbgorvt.cloudfront.net/region1/br/293956/biz_photo/394459b035ce4205a0ddb43a053874-barbearia-barba-negra-biz-photo-567f5ccdfb0a401690edd11f14ad92-booksy.jpeg"
@@ -77,7 +74,6 @@ const Login = () => {
                     <div className="absolute inset-0 bg-black opacity-40 md:rounded-l-lg"></div>
                 </div>
 
-                {/* Formulário de login à direita */}
                 <div className="w-full md:w-1/2 p-6 md:p-10">
                     <h2 className="text-2xl md:text-4xl font-bold text-gray-800 text-center mb-6">
                         Bem-vindo de volta
@@ -154,6 +150,6 @@ const Login = () => {
             </div>
         </div>
     );
-}
+};
 
 export default Login;

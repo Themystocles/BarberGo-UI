@@ -4,7 +4,7 @@ import axios from "axios";
 
 const useUser = () => {
     const [userType, setUserType] = useState<number | null>(null);
-
+    const [loading, setLoading] = useState(true); // Novo estado
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -20,13 +20,15 @@ const useUser = () => {
                 }
             } catch (error) {
                 console.error("Erro ao buscar dados do usuário", error);
+            } finally {
+                setLoading(false); // Finaliza o loading mesmo se der erro
             }
         };
 
         fetchUserData();
     }, []);
 
-    return { userType };
+    return { userType, loading }; // Retorna loading
 };
 
 export default useUser;
