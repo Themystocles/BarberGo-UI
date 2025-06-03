@@ -222,7 +222,8 @@ const LoginWithShowcase = () => {
             </div>
 
             {/* === Versão mobile - imagem + resumo + cortes + formulário === */}
-            <div className="flex flex-col md:hidden w-full bg-white min-h-screen overflow-auto">
+            <div className="flex flex-col md:hidden w-full bg-white h-screen overflow-auto">
+
                 <div className="relative h-48 w-full">
                     <img
                         src="https://d2zdpiztbgorvt.cloudfront.net/region1/br/293956/biz_photo/394459b035ce4205a0ddb43a053874-barbearia-barba-negra-biz-photo-567f5ccdfb0a401690edd11f14ad92-booksy.jpeg"
@@ -336,7 +337,7 @@ const LoginWithShowcase = () => {
                         <div className="mt-6">
                             <button
                                 onClick={handleGoogleLogin}
-                                className="w-full flex items-center justify-center gap-2 border border-gray-300 rounded-lg px-4 py-2 text-gray-700 hover:bg-gray-100 transition"
+                                className="w-full flex items-center justify-center gap-2 border border-blue-600 rounded-lg px-4 py-2 text-blue-600 bg-white hover:bg-blue-600 hover:text-white transition"
                             >
                                 <FcGoogle size={24} />
                                 Entrar com Google
