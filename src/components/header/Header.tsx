@@ -1,48 +1,43 @@
 import { useAuth } from "../../hooks/useAuth";
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState, useRef } from "react";
+import { useContext, useRef } from "react";
 import { FaSignOutAlt, FaChevronDown, FaHome } from "react-icons/fa";
-import axios from "axios";
-import useUser from "../../hooks/useUser";
+import { UserContext } from "../../context/UserContext";
+import React from "react";
 
 const Header = () => {
     const { logout } = useAuth();
     const navigate = useNavigate();
-    const [name, setName] = useState<string>("");
-    const [profilePictureUrl, setProfilePictureUrl] = useState<string>("");
-    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const { user, loading } = useContext(UserContext);
+    const [dropdownOpen, setDropdownOpen] = React.useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
-    const { userType } = useUser();
 
-    const getNameUser = async () => {
-        try {
-            const token = localStorage.getItem("token");
-            const response = await axios.get("https://barbergo-api.onrender.com/api/AppUser/profile", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            setName(response.data.name);
-            setProfilePictureUrl(response.data.profilePictureUrl);
-        } catch (error) {
-            console.error("Erro ao buscar dados do usuário", error);
-        }
-    };
-
-    useEffect(() => {
-        getNameUser();
-
+    // Fechar dropdown clicando fora
+    React.useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
                 setDropdownOpen(false);
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
-
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
+        return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
+
+    if (loading) {
+        return (
+            <header className="flex justify-between items-center px-4 md:px-8 py-4 bg-gray-900 text-white shadow-md bg-opacity-90">
+                <div>Carregando...</div>
+            </header>
+        );
+    }
+
+    if (!user) {
+        return (
+            <header className="flex justify-between items-center px-4 md:px-8 py-4 bg-gray-900 text-white shadow-md bg-opacity-90">
+                <div>Usuário não encontrado</div>
+            </header>
+        );
+    }
 
     return (
         <header className="flex justify-between items-center px-4 md:px-8 py-4 bg-gray-900 text-white shadow-md bg-opacity-90">
@@ -57,28 +52,26 @@ const Header = () => {
 
             {/* Perfil + Sair */}
             <div className="flex items-center gap-4 relative" ref={dropdownRef}>
-                {name && (
-                    <div
-                        className="flex items-center gap-2 cursor-pointer"
-                        onClick={() => setDropdownOpen(!dropdownOpen)}
-                    >
-                        {profilePictureUrl ? (
-                            <img
-                                src={profilePictureUrl}
-                                alt="Perfil"
-                                className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border-2 border-indigo-500 shadow"
-                            />
-                        ) : (
-                            <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-600 flex items-center justify-center text-sm text-white">
-                                {name.charAt(0)}
-                            </div>
-                        )}
-                        <span className="text-sm sm:text-base md:text-lg font-semibold text-indigo-400 max-w-[120px] truncate">
-                            Olá, {name}
-                        </span>
-                        <FaChevronDown className="text-white hover:text-indigo-300 transition" />
-                    </div>
-                )}
+                <div
+                    className="flex items-center gap-2 cursor-pointer"
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                >
+                    {user.profilePictureUrl ? (
+                        <img
+                            src={user.profilePictureUrl}
+                            alt="Perfil"
+                            className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border-2 border-indigo-500 shadow"
+                        />
+                    ) : (
+                        <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-600 flex items-center justify-center text-sm text-white">
+                            {user.name.charAt(0)}
+                        </div>
+                    )}
+                    <span className="text-sm sm:text-base md:text-lg font-semibold text-indigo-400 max-w-[120px] truncate">
+                        Olá, {user.name}
+                    </span>
+                    <FaChevronDown className="text-white hover:text-indigo-300 transition" />
+                </div>
 
                 {/* Botão Sair (visível somente em telas maiores que sm) */}
                 <button
@@ -91,7 +84,7 @@ const Header = () => {
                     <FaSignOutAlt /> Sair
                 </button>
 
-                {/* Dropdown (sempre disponível no clique do nome/foto) */}
+                {/* Dropdown */}
                 {dropdownOpen && (
                     <div className="absolute right-0 top-12 bg-gray-800 text-white shadow-lg rounded-md py-2 w-48 z-50 border border-gray-700">
                         <Link
@@ -102,7 +95,7 @@ const Header = () => {
                             Agendar Corte
                         </Link>
 
-                        {userType === 0 && (
+                        {user.userType === 0 && (
                             <Link
                                 to="/Barbeiros"
                                 className="block px-4 py-2 hover:bg-indigo-500 transition"
@@ -112,7 +105,7 @@ const Header = () => {
                             </Link>
                         )}
 
-                        {userType === 1 && (
+                        {user.userType === 1 && (
                             <Link
                                 to="/Clientes_do_dia"
                                 className="block px-4 py-2 hover:bg-indigo-500 transition"
@@ -130,7 +123,7 @@ const Header = () => {
                             Perfil
                         </Link>
 
-                        {userType === 1 && (
+                        {user.userType === 1 && (
                             <Link
                                 to="/AgendaSemanal"
                                 className="block px-4 py-2 hover:bg-indigo-500 transition"
