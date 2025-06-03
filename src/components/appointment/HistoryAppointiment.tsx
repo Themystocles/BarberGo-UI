@@ -8,9 +8,11 @@ const HistoryAppointment = () => {
     const [historyAppointment, setHistoryAppointment] = useState<IMyAppointments[]>();
     const [userLogged, setUserLogged] = useState<IAppUser>();
     const [date, setDate] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(true); // <- novo estado
 
     useEffect(() => {
         const getUserProfile = async () => {
+            setLoading(true); // inicia o loading
             const token = localStorage.getItem("token");
             const responseUser = await axios.get("https://barbergo-api.onrender.com/api/AppUser/profile", {
                 headers: { Authorization: `Bearer ${token}` }
@@ -20,6 +22,7 @@ const HistoryAppointment = () => {
             setUserLogged(user);
 
             await getHistory(user.id, date);
+            setLoading(false); // encerra o loading
         };
 
         getUserProfile();
@@ -27,7 +30,8 @@ const HistoryAppointment = () => {
 
     useEffect(() => {
         if (userLogged) {
-            getHistory(userLogged.id, date);
+            setLoading(true);
+            getHistory(userLogged.id, date).then(() => setLoading(false));
         }
     }, [date]);
 
@@ -72,22 +76,49 @@ const HistoryAppointment = () => {
                     />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
-                    {historyAppointment?.map((a) => (
-                        <div
-                            key={a.id}
-                            className="bg-gray-800 bg-opacity-80 p-6 rounded-xl shadow-lg border border-gray-700"
+                {loading ? (
+                    <div className="flex justify-center items-center h-[60vh]">
+                        <svg
+                            className="animate-spin h-12 w-12 text-cyan-400"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
                         >
-                            <h3 className="text-xl font-semibold mb-2">Corte: {a.haircutName}</h3>
-                            <p className="text-gray-300"><strong>Barbeiro:</strong> {a.barberName}</p>
-                            <p className="text-gray-300"><strong>Cliente:</strong> {a.clientName}</p>
-                            <p className="text-gray-300"><strong>Data:</strong> {new Date(a.dateTime).toLocaleString("pt-BR")}</p>
+                            <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                            ></circle>
+                            <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                            ></path>
+                        </svg>
+                    </div>
+                ) : (
+                    <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
+                            {historyAppointment?.map((a) => (
+                                <div
+                                    key={a.id}
+                                    className="bg-gray-800 bg-opacity-80 p-6 rounded-xl shadow-lg border border-gray-700"
+                                >
+                                    <h3 className="text-xl font-semibold mb-2">Corte: {a.haircutName}</h3>
+                                    <p className="text-gray-300"><strong>Barbeiro:</strong> {a.barberName}</p>
+                                    <p className="text-gray-300"><strong>Cliente:</strong> {a.clientName}</p>
+                                    <p className="text-gray-300"><strong>Data:</strong> {new Date(a.dateTime).toLocaleString("pt-BR")}</p>
+                                </div>
+                            ))}
                         </div>
-                    ))}
-                </div>
 
-                {!historyAppointment?.length && (
-                    <p className="text-gray-300 mt-10">Nenhum agendamento encontrado.</p>
+                        {!historyAppointment?.length && (
+                            <p className="text-gray-300 mt-10">Nenhum agendamento encontrado.</p>
+                        )}
+                    </>
                 )}
             </main>
 
