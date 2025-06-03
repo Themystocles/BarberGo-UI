@@ -222,13 +222,15 @@ const LoginWithShowcase = () => {
             </div>
 
             {/* === Versão mobile - imagem + resumo + cortes + formulário === */}
-            <div className="flex flex-col md:hidden w-full bg-white h-screen overflow-auto">
+            <div className="md:hidden w-full bg-white flex flex-col min-h-screen overflow-y-scroll">
 
-                <div className="relative h-48 w-full">
+
+
+                <div className="relative h-80 w-full">
                     <img
                         src="https://d2zdpiztbgorvt.cloudfront.net/region1/br/293956/biz_photo/394459b035ce4205a0ddb43a053874-barbearia-barba-negra-biz-photo-567f5ccdfb0a401690edd11f14ad92-booksy.jpeg"
                         alt="Barbearia Barba Negra"
-                        className="absolute inset-0 w-full h-full object-cover"
+                        className="absolute inset-0 w-full h-full object-cover object-top"
                     />
                     <div className="absolute inset-0 bg-black bg-opacity-60"></div>
                     <div className="relative z-10 p-4 text-white flex flex-col justify-center h-full">
@@ -357,6 +359,7 @@ const LoginWithShowcase = () => {
                 </div>
             </div>
         </div>
+
     );
 
 };
