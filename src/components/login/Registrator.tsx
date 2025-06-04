@@ -18,7 +18,24 @@ export default function UserRegistration() {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUser({ ...user, [e.target.name]: e.target.value });
     };
+    const handleImageupload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
 
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const response = await axios.post("https://barbergo-api.onrender.com/api/AppUser/upload", formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+
+            const imageUrl = response.data.url;
+            setUser(prev => ({ ...prev, profilePictureUrl: imageUrl }));
+        } catch (err) {
+            console.error("Erro ao fazer upload da imagem:", err);
+        }
+    };
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -93,6 +110,16 @@ export default function UserRegistration() {
                                 value={user.passwordHash}
                                 onChange={handleChange}
                             />
+                        </div>
+                        <label className="block text-gray-700">Foto de Perfil</label>
+                        <input type="file"
+                            accept="image/*"
+                            name="upload"
+                            className="w-full p-3 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            onChange={handleImageupload}>
+                        </input>
+                        <div>
+
                         </div>
                         <button
                             type="submit"
