@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { IAppUser } from "../../interfaces/AppUser";
 import { useNavigate } from "react-router-dom";
+import Header from "../header/Header";
 
 const Perfil = () => {
     const [user, setUser] = useState<IAppUser>();
@@ -26,7 +27,7 @@ const Perfil = () => {
         getUser();
     }, []);
 
-    return (
+    return (<><Header />
         <div className="min-h-screen flex items-center justify-center px-4 py-10">
             {user ? (
                 <div className="bg-white/10 backdrop-blur-md w-full max-w-4xl p-8 rounded-2xl shadow-xl flex flex-col md:flex-row gap-10 text-white border border-white/20">
@@ -74,6 +75,8 @@ const Perfil = () => {
                 <p className="text-gray-600 text-lg">Carregando dados do usuário...</p>
             )}
         </div>
+    </>
+
     );
 };
 

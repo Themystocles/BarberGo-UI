@@ -243,9 +243,7 @@ const LoginWithShowcase = () => {
 
                 <section className="p-4">
                     <h2 className="text-xl font-bold mb-2">Nossos Cortes</h2>
-                    <p className="mb-4 text-gray-600 max-w-md">
-                        Confira alguns dos cortes que oferecemos e escolha seu favorito!
-                    </p>
+                    <p className="mb-4 text-gray-600 max-w-md">Confira alguns dos cortes que oferecemos...</p>
 
                     <div className="flex overflow-x-auto gap-4 pb-4">
                         {haircuts.length === 0 && (
