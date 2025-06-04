@@ -15,6 +15,7 @@ const Perfil = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
+            console.log("Dados do usuário recebidos:", response.data);  // <-- Aqui!
             setUser(response.data);
         } catch (error) {
             console.error("Erro ao buscar dados do usuário", error);
