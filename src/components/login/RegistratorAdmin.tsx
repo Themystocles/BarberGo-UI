@@ -53,10 +53,11 @@ export default function RegistratorUserAdmin() {
         }
 
         try {
-            await axios.post(
-                "https://barbergo-api.onrender.com/api/AppUser/create",
-                user
-            );
+            await axios.post("https://barbergo-api.onrender.com/api/AppUser/createUserAdmin", user, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`
+                }
+            });
             alert("Usuário cadastrado com sucesso!");
         } catch (error) {
             alert("Erro ao cadastrar usuário");
