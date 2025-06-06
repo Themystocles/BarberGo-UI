@@ -17,6 +17,7 @@ import LoginSuccess from "../components/login/LoginSuccess";
 import MyAppointments from "../components/appointment/MyAppointments";
 import HistoryAppointment from "../components/appointment/HistoryAppointiment";
 import BarberHistory from "../components/appointment/BarberHistory";
+import RegistratorUserAdmin from "../components/login/RegistratorAdmin";
 
 
 
@@ -46,6 +47,7 @@ const AppRoutes = () => {
                 <Route path="/MeusAgendamentos" element={<PrivateRoute element={<MyAppointments />} />} />
                 <Route path="/Historico" element={<PrivateRoute element={<HistoryAppointment />} />} />
                 <Route path="/HistoricoClientes" element={<PrivateRoute element={<BarberHistory />} />} />
+                <Route path="/CadastrarAdm" element={<PrivateRoute element={<RegistratorUserAdmin />} />} />
 
 
 

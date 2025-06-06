@@ -13,6 +13,7 @@ export default function UserRegistration() {
         googleId: "",
         profilePictureUrl: "",
         createdAt: new Date().toISOString(),
+        type: 0
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,6 +46,17 @@ export default function UserRegistration() {
             alert("Erro ao cadastrar usuário");
             console.error(error);
         }
+        const getUser = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const response = await axios.get("https://barbergo-api.onrender.com/api/AppUser/profile", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setUser(response.data);
+            } catch (error) {
+                console.error("Erro ao buscar dados do usuário", error);
+            }
+        };
     };
 
     return (
@@ -111,6 +123,8 @@ export default function UserRegistration() {
                                 onChange={handleChange}
                             />
                         </div>
+
+
                         <label className="block text-gray-700">Foto de Perfil</label>
                         <input type="file"
                             accept="image/*"
@@ -121,6 +135,7 @@ export default function UserRegistration() {
                         <div>
 
                         </div>
+
                         <button
                             type="submit"
                             className="w-full py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"

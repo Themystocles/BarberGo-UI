@@ -109,9 +109,9 @@ const Perfil = () => {
                                 </button>
                                 <button
                                     className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition"
-                                    onClick={() => navigate("/Home")}
+                                    onClick={() => navigate("/CadastrarAdm")}
                                 >
-                                    Voltar para Home
+                                    Cadastrar administrador
                                 </button>
                             </div>
                         </div>
