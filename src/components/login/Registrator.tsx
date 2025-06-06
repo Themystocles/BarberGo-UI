@@ -46,17 +46,7 @@ export default function UserRegistration() {
             alert("Erro ao cadastrar usuário");
             console.error(error);
         }
-        const getUser = async () => {
-            try {
-                const token = localStorage.getItem("token");
-                const response = await axios.get("https://barbergo-api.onrender.com/api/AppUser/profile", {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                setUser(response.data);
-            } catch (error) {
-                console.error("Erro ao buscar dados do usuário", error);
-            }
-        };
+
     };
 
     return (
