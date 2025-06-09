@@ -81,10 +81,10 @@ export default function RegistratorUserAdmin() {
                     </h2>
                     <form
                         onSubmit={handleSubmit}
-                        className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                        className="grid grid-cols-1 md:grid-cols-4 gap-6"
                     >
                         {/* Coluna 1 */}
-                        <div className="space-y-5">
+                        <div className="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
                                 <label className="block mb-1 text-gray-300">Nome</label>
                                 <input
@@ -135,10 +135,7 @@ export default function RegistratorUserAdmin() {
                                     onChange={handleChange}
                                 />
                             </div>
-                        </div>
 
-                        {/* Coluna 2 */}
-                        <div className="space-y-5">
                             <div>
                                 <label className="block mb-1 text-gray-300">Tipo de Usuário</label>
                                 <select
@@ -161,7 +158,6 @@ export default function RegistratorUserAdmin() {
                                 </select>
                             </div>
 
-                            {/* Input de upload file (antes da foto) */}
                             <div>
                                 <label className="block mb-1 text-gray-300">Foto de Perfil</label>
                                 <input
@@ -172,9 +168,11 @@ export default function RegistratorUserAdmin() {
                                     onChange={handleImageupload}
                                 />
                             </div>
+                        </div>
 
-                            {/* Espaço reservado para foto */}
-                            <div className="w-32 h-32 rounded-full border-4 border-indigo-500 mt-2 flex items-center justify-center overflow-hidden bg-gray-800">
+                        {/* Coluna 4 (Foto ao lado no md pra cima) */}
+                        <div className="flex flex-col items-center justify-start md:justify-center">
+                            <div className="w-32 h-32 rounded-full border-4 border-indigo-500 flex items-center justify-center overflow-hidden bg-gray-800">
                                 {user.profilePictureUrl ? (
                                     <img
                                         src={user.profilePictureUrl}
@@ -189,8 +187,8 @@ export default function RegistratorUserAdmin() {
                             </div>
                         </div>
 
-                        {/* Botão de submit ocupando as duas colunas */}
-                        <div className="md:col-span-2 mt-6 flex flex-col items-center gap-4">
+                        {/* Botão (ocupa 4 colunas) */}
+                        <div className="md:col-span-4 mt-6 flex justify-center">
                             <button
                                 type="submit"
                                 className="w-full max-w-md py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold text-lg focus:ring-2 focus:ring-indigo-500"

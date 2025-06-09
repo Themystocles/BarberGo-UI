@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 import Header from "../header/Header";
 
 const Perfil = () => {
-    const [user, setUser] = useState<IAppUser>();
+    const [user, setUser] = useState<IAppUser | null>(null);
+    const [loading, setLoading] = useState(true);
     const [loadingDelete, setLoadingDelete] = useState(false);
     const navigate = useNavigate();
 
@@ -18,6 +19,8 @@ const Perfil = () => {
             setUser(response.data);
         } catch (error) {
             console.error("Erro ao buscar dados do usuário", error);
+        } finally {
+            setLoading(false); // só libera a tela depois que user foi carregado
         }
     };
 
@@ -41,7 +44,6 @@ const Perfil = () => {
             });
 
             alert("Conta excluída com sucesso!");
-            // Aqui você pode limpar o localStorage e redirecionar para login/home
             localStorage.removeItem("token");
             navigate("/login");
         } catch (error) {
@@ -55,9 +57,12 @@ const Perfil = () => {
     return (
         <>
             <Header />
-            <div className="min-h-screen flex items-center justify-center px-4 py-10">
-                {user ? (
+            <div className="min-h-screen flex items-center justify-center px-4 py-10 bg-gray-900">
+                {loading ? (
+                    <p className="text-gray-400 text-lg">Carregando dados do usuário...</p>
+                ) : user ? (
                     <div className="bg-white/10 backdrop-blur-md w-full max-w-4xl p-8 rounded-2xl shadow-xl flex flex-col md:flex-row gap-10 text-white border border-white/20">
+                        {/* Coluna da foto */}
                         <div className="flex flex-col items-center md:items-start">
                             {user.profilePictureUrl ? (
                                 <img
@@ -72,7 +77,8 @@ const Perfil = () => {
                             )}
                         </div>
 
-                        <div className="flex-1 flex flex-col justify-between space-y-4">
+                        {/* Coluna de dados + botões */}
+                        <div className="flex-1 flex flex-col justify-between space-y-6">
                             <div>
                                 <h2 className="text-3xl font-bold text-indigo-400 mb-4">Perfil do Usuário</h2>
                                 <p className="text-lg">
@@ -91,33 +97,44 @@ const Perfil = () => {
                                     {new Date(user.createdAt).toLocaleDateString("pt-BR")}
                                 </p>
                                 <p className="text-lg">
-                                    <span className="font-semibold">Permissão: </span> {user.type === 1 ? "Administrador" : "Usuário"}
+                                    <span className="font-semibold">Permissão:</span>{" "}
+                                    {user.type === 1 ? "Administrador" : "Usuário"}
                                 </p>
                             </div>
 
-                            <div className="mt-6 flex flex-col sm:flex-row gap-4 flex-wrap">
-                                <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg transition">
+                            {/* Botões de ações */}
+                            <div className="flex flex-col sm:flex-row gap-4 flex-wrap">
+                                <button
+                                    className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg transition"
+                                >
                                     Editar Perfil
                                 </button>
                                 <button
                                     onClick={excluirConta}
                                     disabled={loadingDelete}
-                                    className={`bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition ${loadingDelete ? "opacity-50 cursor-not-allowed" : ""
+                                    className={`flex-1 bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition ${loadingDelete ? "opacity-50 cursor-not-allowed" : ""
                                         }`}
                                 >
                                     {loadingDelete ? "Excluindo..." : "Excluir Conta"}
                                 </button>
-                                <button
-                                    className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition"
-                                    onClick={() => navigate("/CadastrarAdm")}
-                                >
-                                    Cadastrar administrador
-                                </button>
                             </div>
+
+                            {/* Botão separado para administrador */}
+                            {user.type === 1 && (
+                                <div className="mt-8 border-t border-white/20 pt-6">
+                                    <p className="text-sm text-gray-400 mb-2">Área de Administração</p>
+                                    <button
+                                        className="w-full bg-yellow-500 hover:bg-yellow-600 text-black px-6 py-2 rounded-lg font-semibold transition"
+                                        onClick={() => navigate("/CadastrarAdm")}
+                                    >
+                                        Cadastrar Novo Administrador
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
                 ) : (
-                    <p className="text-gray-600 text-lg">Carregando dados do usuário...</p>
+                    <p className="text-red-500 text-lg">Erro ao carregar perfil do usuário.</p>
                 )}
             </div>
         </>
