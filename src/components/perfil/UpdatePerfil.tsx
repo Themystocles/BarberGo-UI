@@ -7,6 +7,32 @@ const UpdatePerfil = () => {
     const [User, setUser] = useState<IAppUser>();
     const [loading, setLoading] = useState(true);
 
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const response = await axios.post("https://barbergo-api.onrender.com/api/AppUser/upload", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            // Atualiza a URL da imagem no User
+            setUser((prevUser) =>
+                prevUser ? { ...prevUser, profilePictureUrl: response.data.url } : prevUser
+            );
+
+            alert("Imagem enviada com sucesso!");
+        } catch (error) {
+            console.error("Erro ao fazer upload da imagem", error);
+            alert("Erro ao enviar imagem.");
+        }
+    };
+
     const getUser = async () => {
         try {
             const token = localStorage.getItem("token");
@@ -101,13 +127,12 @@ const UpdatePerfil = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm text-gray-300 mb-1">URL da Foto de Perfil</label>
+                                <label className="block text-sm text-gray-300 mb-1">Foto de Perfil</label>
                                 <input
-                                    type="text"
-                                    value={User?.profilePictureUrl}
-                                    placeholder="URL da Foto de Perfil"
-                                    onChange={(e) => setUser({ ...User, profilePictureUrl: e.target.value })}
-                                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleFileChange}
+                                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                 />
                             </div>
                             {User?.profilePictureUrl && (

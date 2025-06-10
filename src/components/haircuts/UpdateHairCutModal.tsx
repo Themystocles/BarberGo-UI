@@ -9,6 +9,30 @@ const UpdateHaircutModal = ({ haircut, onClose, onUpdated }: UpdateHaircutModalP
     const [showbtnsave, setShowbtnsave] = useState<boolean>(true);
     const [showcancel, setShowcancel] = useState<boolean>(true)
 
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const formDataUpload = new FormData();
+        formDataUpload.append("file", file);
+
+        try {
+            const response = await axios.post("https://barbergo-api.onrender.com/api/AppUser/upload", formDataUpload, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            // Atualiza o campo imagePath com a URL retornada
+            setFormData((prev) => ({ ...prev, imagePath: response.data.url }));
+
+            alert("Imagem enviada com sucesso!");
+        } catch (error) {
+            console.error("Erro ao fazer upload da imagem", error);
+            alert("Erro ao enviar imagem.");
+        }
+    };
+
 
     const handleSubmit = async () => {
 
@@ -56,13 +80,25 @@ const UpdateHaircutModal = ({ haircut, onClose, onUpdated }: UpdateHaircutModalP
                         placeholder="Preço"
                         className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
-                    <input
-                        type="text"
-                        value={formData.imagePath}
-                        onChange={(e) => setFormData({ ...formData, imagePath: e.target.value })}
-                        placeholder="URL da imagem"
-                        className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
+                    <div>
+                        <label className="block text-sm text-gray-300 mb-1">Imagem do Corte</label>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        />
+                    </div>
+
+                    {formData.imagePath && (
+                        <div className="my-4 flex justify-center">
+                            <img
+                                src={formData.imagePath}
+                                alt="Imagem do Corte"
+                                className="w-32 h-32 object-cover border-4 border-indigo-500"
+                            />
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex justify-end mt-6 gap-3">
