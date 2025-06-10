@@ -18,6 +18,7 @@ import MyAppointments from "../components/appointment/MyAppointments";
 import HistoryAppointment from "../components/appointment/HistoryAppointiment";
 import BarberHistory from "../components/appointment/BarberHistory";
 import RegistratorUserAdmin from "../components/login/RegistratorAdmin";
+import UpdatePerfil from "../components/perfil/UpdatePerfil";
 
 
 
@@ -37,6 +38,7 @@ const AppRoutes = () => {
                 {/* Página privada */}
                 <Route path="/Home" element={<PrivateRoute element={<Home />} />} />
                 <Route path="/perfil" element={<PrivateRoute element={<Perfil />} />} />
+                <Route path="/Updateperfil" element={<PrivateRoute element={<UpdatePerfil />} />} />
                 <Route path="/agendamentos" element={<PrivateRoute element={<Appointment />} />} />
                 <Route path="/ConfiguraçãoHorarios" element={<PrivateRoute element={<SchedulesConfig />} />} />
                 <Route path="/ConfirmarHorario" element={<PrivateRoute element={<ScheduleConfirmation />} />} />

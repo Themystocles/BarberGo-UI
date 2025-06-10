@@ -20,7 +20,7 @@ const Perfil = () => {
         } catch (error) {
             console.error("Erro ao buscar dados do usuário", error);
         } finally {
-            setLoading(false); // só libera a tela depois que user foi carregado
+            setLoading(false);
         }
     };
 
@@ -104,7 +104,7 @@ const Perfil = () => {
 
                             {/* Botões de ações */}
                             <div className="flex flex-col sm:flex-row gap-4 flex-wrap">
-                                <button
+                                <button onClick={() => navigate("/Updateperfil")}
                                     className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg transition"
                                 >
                                     Editar Perfil
