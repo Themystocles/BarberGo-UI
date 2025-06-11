@@ -17,7 +17,7 @@ const LoginWithShowcase = () => {
     const [haircuts, setHaircuts] = useState<Haircut[]>([]);
 
     useEffect(() => {
-        document.body.style.overflow = "hidden"; // bloqueia scroll vertical na página de login
+        document.body.style.overflow = "hidden";
         return () => {
             document.body.style.overflow = "";
         };
@@ -33,7 +33,7 @@ const LoginWithShowcase = () => {
                 );
                 setHaircuts(res.data);
             } catch (e) {
-                // Se der erro (ex: não logado), não faz nada
+
             }
         };
         fetchHaircuts();
@@ -41,8 +41,10 @@ const LoginWithShowcase = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        console.log("==> Enviando login");
         setIsLoading(true);
         const success = await login(email, password);
+        console.log("==> Resultado login:", success);
         if (success) {
             await refreshUser();
             setTimeout(() => navigate("/home"), 2000);
