@@ -11,7 +11,9 @@ export const useAuth = () => {
         setError("");
         setSuccessMessage("");
         try {
-            const response = await api.post("/login", { Email: email, Password: password });
+            const response = await api.post("/login", { Email: email, Password: password }).catch((err) => {
+                throw err;
+            });
 
             if (response.data && response.data.token) {
                 const { token } = response.data;
