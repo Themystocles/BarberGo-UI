@@ -13,26 +13,30 @@ const UpdateHaircutModal = ({ haircut, onClose, onUpdated }: UpdateHaircutModalP
         const file = e.target.files?.[0];
         if (!file) return;
 
-        const formDataUpload = new FormData();
-        formDataUpload.append("file", file);
+        const data = new FormData();
+        data.append("file", file);
+        data.append("upload_preset", "ml_default"); // ⬅️ Substitua pelo seu preset do Cloudinary
 
         try {
-            const response = await axios.post("https://barbergo-api.onrender.com/api/AppUser/upload", formDataUpload, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
+            const res = await fetch("https://api.cloudinary.com/v1_1/ddrwfsafk/image/upload", {
+                method: "POST",
+                body: data,
             });
 
-            // Atualiza o campo imagePath com a URL retornada
-            setFormData((prev) => ({ ...prev, imagePath: response.data.url }));
+            const result = await res.json();
 
-            alert("Imagem enviada com sucesso!");
+            if (result.secure_url) {
+                setFormData((prev) => ({ ...prev, imagePath: result.secure_url }));
+                alert("Imagem enviada com sucesso!");
+            } else {
+                throw new Error("Erro ao obter a URL da imagem.");
+            }
+
         } catch (error) {
-            console.error("Erro ao fazer upload da imagem", error);
+            console.error("Erro ao fazer upload da imagem ", error);
             alert("Erro ao enviar imagem.");
         }
     };
-
 
     const handleSubmit = async () => {
 

@@ -13,20 +13,24 @@ const UpdatePerfil = () => {
 
         const formData = new FormData();
         formData.append("file", file);
+        formData.append("upload_preset", "ml_default"); // seu preset do Cloudinary
 
         try {
-            const response = await axios.post("https://barbergo-api.onrender.com/api/AppUser/upload", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
+            const response = await fetch("https://api.cloudinary.com/v1_1/ddrwfsafk/image/upload", {
+                method: "POST",
+                body: formData,
             });
 
-            // Atualiza a URL da imagem no User
-            setUser((prevUser) =>
-                prevUser ? { ...prevUser, profilePictureUrl: response.data.url } : prevUser
-            );
+            const data = await response.json();
 
-            alert("Imagem enviada com sucesso!");
+            if (data.secure_url) {
+                setUser((prevUser) =>
+                    prevUser ? { ...prevUser, profilePictureUrl: data.secure_url } : prevUser
+                );
+                alert("Imagem enviada com sucesso!");
+            } else {
+                throw new Error("Erro ao obter a URL da imagem.");
+            }
         } catch (error) {
             console.error("Erro ao fazer upload da imagem", error);
             alert("Erro ao enviar imagem.");
