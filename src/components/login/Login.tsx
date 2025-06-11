@@ -47,7 +47,7 @@ const LoginWithShowcase = () => {
         console.log("==> Resultado login:", success);
         if (success) {
             await refreshUser();
-            setTimeout(() => navigate("/home"), 2000);
+            navigate("/home");
         } else {
             setIsLoading(false);
         }
