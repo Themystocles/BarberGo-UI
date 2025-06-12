@@ -11,7 +11,7 @@ interface UserContextType {
     user: User | null;
     loading: boolean;
     refreshUser: () => Promise<void>;
-    logoutUser: () => void; // adicionada função de logout
+    logoutUser: () => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);

@@ -21,10 +21,13 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response && error.response.status === 401) {
-            // Token inválido/expirado
+        if (
+            error.response &&
+            error.response.status === 401 &&
+            !window.location.pathname.includes("/login")
+        ) {
             localStorage.removeItem("token");
-            //   window.location.href = "/login"; // redireciona para login
+            window.location.href = "/login";
         }
         return Promise.reject(error);
     }
