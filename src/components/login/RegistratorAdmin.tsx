@@ -17,6 +17,9 @@ export default function RegistratorUserAdmin() {
         type: 0,
     });
 
+    const [uploading, setUploading] = useState(false);
+    const [uploadMessage, setUploadMessage] = useState("");
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUser({ ...user, [e.target.name]: e.target.value });
     };
@@ -25,22 +28,31 @@ export default function RegistratorUserAdmin() {
         const file = e.target.files?.[0];
         if (!file) return;
 
+        setUploading(true);
+        setUploadMessage("Carregando foto...");
+
         const formData = new FormData();
         formData.append("file", file);
+        formData.append("upload_preset", "ml_default"); // ajuste para seu preset real
 
         try {
             const response = await axios.post(
-                "https://barbergo-api.onrender.com/api/AppUser/upload",
-                formData,
-                {
-                    headers: { "Content-Type": "multipart/form-data" },
-                }
+                "https://api.cloudinary.com/v1_1/ddrwfsafk/image/upload", // ajuste para seu cloud_name real
+                formData
             );
 
-            const imageUrl = response.data.url;
-            setUser((prev) => ({ ...prev, profilePictureUrl: imageUrl }));
-        } catch (err) {
-            console.error("Erro ao fazer upload da imagem:", err);
+            if (response.data.secure_url) {
+                setUser(prev => ({ ...prev, profilePictureUrl: response.data.secure_url }));
+                setUploadMessage("Foto carregada com sucesso!");
+            } else {
+                throw new Error("URL da imagem não retornada.");
+            }
+        } catch (error) {
+            console.error("Erro ao fazer upload da imagem:", error);
+            setUploadMessage("Erro ao carregar a foto.");
+        } finally {
+            setUploading(false);
+            setTimeout(() => setUploadMessage(""), 3000);
         }
     };
 
@@ -55,8 +67,8 @@ export default function RegistratorUserAdmin() {
         try {
             await axios.post("https://barbergo-api.onrender.com/api/AppUser/createUserAdmin", user, {
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`
-                }
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
             });
             alert("Usuário cadastrado com sucesso!");
         } catch (error) {
@@ -76,13 +88,8 @@ export default function RegistratorUserAdmin() {
                 }}
             >
                 <div className="w-full max-w-4xl bg-black bg-opacity-70 text-white rounded-xl shadow-xl p-8">
-                    <h2 className="text-3xl font-bold text-center mb-8">
-                        Criar Conta (Admin)
-                    </h2>
-                    <form
-                        onSubmit={handleSubmit}
-                        className="grid grid-cols-1 md:grid-cols-4 gap-6"
-                    >
+                    <h2 className="text-3xl font-bold text-center mb-8">Criar Conta (Admin)</h2>
+                    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-6">
                         {/* Coluna 1 */}
                         <div className="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
@@ -166,7 +173,34 @@ export default function RegistratorUserAdmin() {
                                     name="upload"
                                     className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-indigo-500"
                                     onChange={handleImageupload}
+                                    disabled={uploading}
                                 />
+                                {/* Mensagem/loader do upload */}
+                                <div className="mt-2 text-sm text-indigo-400 flex items-center">
+                                    {uploading ? (
+                                        <svg
+                                            className="animate-spin h-5 w-5 mr-2 text-indigo-400"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <circle
+                                                className="opacity-25"
+                                                cx="12"
+                                                cy="12"
+                                                r="10"
+                                                stroke="currentColor"
+                                                strokeWidth="4"
+                                            ></circle>
+                                            <path
+                                                className="opacity-75"
+                                                fill="currentColor"
+                                                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                            ></path>
+                                        </svg>
+                                    ) : null}
+                                    {uploadMessage}
+                                </div>
                             </div>
                         </div>
 
@@ -180,9 +214,7 @@ export default function RegistratorUserAdmin() {
                                         className="w-full h-full object-cover"
                                     />
                                 ) : (
-                                    <span className="text-sm text-gray-400 text-center px-2">
-                                        Foto de Perfil
-                                    </span>
+                                    <span className="text-sm text-gray-400 text-center px-2">Foto de Perfil</span>
                                 )}
                             </div>
                         </div>
@@ -192,6 +224,7 @@ export default function RegistratorUserAdmin() {
                             <button
                                 type="submit"
                                 className="w-full max-w-md py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold text-lg focus:ring-2 focus:ring-indigo-500"
+                                disabled={uploading}
                             >
                                 Cadastrar
                             </button>

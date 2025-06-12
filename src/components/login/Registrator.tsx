@@ -13,40 +13,60 @@ export default function UserRegistration() {
         googleId: "",
         profilePictureUrl: "",
         createdAt: new Date().toISOString(),
-        type: 0
+        type: 0,
     });
+
+    const [isUploading, setIsUploading] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUser({ ...user, [e.target.name]: e.target.value });
     };
-    const handleImageupload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        const formData = new FormData();
-        formData.append("file", file);
+        const data = new FormData();
+        data.append("file", file);
+        data.append("upload_preset", "ml_default"); // seu preset Cloudinary
 
         try {
-            const response = await axios.post("https://barbergo-api.onrender.com/api/AppUser/upload", formData, {
-                headers: { "Content-Type": "multipart/form-data" },
-            });
+            setIsUploading(true);
+            const res = await fetch(
+                "https://api.cloudinary.com/v1_1/ddrwfsafk/image/upload",
+                {
+                    method: "POST",
+                    body: data,
+                }
+            );
 
-            const imageUrl = response.data.url;
-            setUser(prev => ({ ...prev, profilePictureUrl: imageUrl }));
-        } catch (err) {
-            console.error("Erro ao fazer upload da imagem:", err);
+            const result = await res.json();
+
+            if (result.secure_url) {
+                setUser((prev) => ({ ...prev, profilePictureUrl: result.secure_url }));
+            } else {
+                throw new Error("Erro ao obter a URL da imagem.");
+            }
+        } catch (error) {
+            console.error("Erro ao fazer upload da imagem ", error);
+            alert("Erro ao enviar imagem.");
+        } finally {
+            setIsUploading(false);
         }
     };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await axios.post("https://barbergo-api.onrender.com/api/AppUser/create", user);
+            await axios.post(
+                "https://barbergo-api.onrender.com/api/AppUser/create",
+                user
+            );
             alert("Usuário cadastrado com sucesso!");
         } catch (error) {
             alert("Erro ao cadastrar usuário");
             console.error(error);
         }
-
     };
 
     return (
@@ -64,7 +84,9 @@ export default function UserRegistration() {
 
                 {/* Formulário */}
                 <div className="w-full md:w-1/2 p-8 md:p-10">
-                    <h2 className="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-6">Criar Conta</h2>
+                    <h2 className="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-6">
+                        Criar Conta
+                    </h2>
                     <form className="space-y-5" onSubmit={handleSubmit}>
                         <div>
                             <label className="block text-gray-700">Nome</label>
@@ -76,6 +98,7 @@ export default function UserRegistration() {
                                 required
                                 value={user.name}
                                 onChange={handleChange}
+                                disabled={isUploading}
                             />
                         </div>
                         <div>
@@ -88,6 +111,7 @@ export default function UserRegistration() {
                                 required
                                 value={user.email}
                                 onChange={handleChange}
+                                disabled={isUploading}
                             />
                         </div>
                         <div>
@@ -99,6 +123,7 @@ export default function UserRegistration() {
                                 className="w-full p-3 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                 value={user.phone}
                                 onChange={handleChange}
+                                disabled={isUploading}
                             />
                         </div>
                         <div>
@@ -111,24 +136,31 @@ export default function UserRegistration() {
                                 required
                                 value={user.passwordHash}
                                 onChange={handleChange}
+                                disabled={isUploading}
                             />
                         </div>
 
-
                         <label className="block text-gray-700">Foto de Perfil</label>
-                        <input type="file"
+                        <input
+                            type="file"
                             accept="image/*"
                             name="upload"
                             className="w-full p-3 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                            onChange={handleImageupload}>
-                        </input>
-                        <div>
+                            onChange={handleImageUpload}
+                            disabled={isUploading}
+                        />
 
-                        </div>
+                        {isUploading && (
+                            <div className="flex items-center justify-center space-x-2 mt-2">
+                                <div className="w-5 h-5 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                                <span className="text-indigo-600 font-semibold">Enviando imagem...</span>
+                            </div>
+                        )}
 
                         <button
                             type="submit"
-                            className="w-full py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            className="w-full py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled={isUploading}
                         >
                             Cadastrar
                         </button>
