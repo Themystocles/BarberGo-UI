@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { IAppUser } from "../../interfaces/AppUser.tsx";
 import { Link } from "react-router-dom";
@@ -19,6 +19,14 @@ export default function RegistratorUserAdmin() {
 
     const [uploading, setUploading] = useState(false);
     const [uploadMessage, setUploadMessage] = useState("");
+    const [mensagem, setMensagem] = useState<{ texto: string; tipo: "success" | "error" } | null>(null);
+
+    useEffect(() => {
+        if (mensagem) {
+            const timer = setTimeout(() => setMensagem(null), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [mensagem]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUser({ ...user, [e.target.name]: e.target.value });
@@ -33,11 +41,11 @@ export default function RegistratorUserAdmin() {
 
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("upload_preset", "ml_default"); // ajuste para seu preset real
+        formData.append("upload_preset", "ml_default");
 
         try {
             const response = await axios.post(
-                "https://api.cloudinary.com/v1_1/ddrwfsafk/image/upload", // ajuste para seu cloud_name real
+                "https://api.cloudinary.com/v1_1/ddrwfsafk/image/upload",
                 formData
             );
 
@@ -60,7 +68,7 @@ export default function RegistratorUserAdmin() {
         e.preventDefault();
 
         if (user.type === 0) {
-            alert("Por favor, escolha o tipo de usuário.");
+            setMensagem({ texto: "Por favor, escolha o tipo de usuário.", tipo: "error" });
             return;
         }
 
@@ -70,10 +78,26 @@ export default function RegistratorUserAdmin() {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
             });
-            alert("Usuário cadastrado com sucesso!");
-        } catch (error) {
-            alert("Erro ao cadastrar usuário");
-            console.error(error);
+
+            setMensagem({ texto: "Usuário cadastrado com sucesso!", tipo: "success" });
+
+            setUser({
+                id: 0,
+                name: "",
+                email: "",
+                phone: "",
+                passwordHash: "",
+                googleId: "",
+                profilePictureUrl: "",
+                createdAt: new Date().toISOString(),
+                type: 0,
+            });
+        } catch (error: any) {
+            if (axios.isAxiosError(error) && error.response?.status === 409) {
+                setMensagem({ texto: "E-mail já cadastrado. Faça login.", tipo: "error" });
+            } else {
+                setMensagem({ texto: "Erro ao cadastrar usuário. Tente novamente.", tipo: "error" });
+            }
         }
     };
 
@@ -88,9 +112,20 @@ export default function RegistratorUserAdmin() {
                 }}
             >
                 <div className="w-full max-w-4xl bg-black bg-opacity-70 text-white rounded-xl shadow-xl p-8">
-                    <h2 className="text-3xl font-bold text-center mb-8">Criar Conta (Admin)</h2>
+                    <h2 className="text-3xl font-bold text-center mb-6">Criar Conta (Admin)</h2>
+
+                    {mensagem && (
+                        <div
+                            className={`text-center mb-6 p-3 rounded ${mensagem.tipo === "success"
+                                    ? "bg-green-600 text-white"
+                                    : "bg-red-600 text-white"
+                                }`}
+                        >
+                            {mensagem.texto}
+                        </div>
+                    )}
+
                     <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        {/* Coluna 1 */}
                         <div className="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
                                 <label className="block mb-1 text-gray-300">Nome</label>
@@ -175,9 +210,8 @@ export default function RegistratorUserAdmin() {
                                     onChange={handleImageupload}
                                     disabled={uploading}
                                 />
-                                {/* Mensagem/loader do upload */}
                                 <div className="mt-2 text-sm text-indigo-400 flex items-center">
-                                    {uploading ? (
+                                    {uploading && (
                                         <svg
                                             className="animate-spin h-5 w-5 mr-2 text-indigo-400"
                                             xmlns="http://www.w3.org/2000/svg"
@@ -198,13 +232,12 @@ export default function RegistratorUserAdmin() {
                                                 d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
                                             ></path>
                                         </svg>
-                                    ) : null}
+                                    )}
                                     {uploadMessage}
                                 </div>
                             </div>
                         </div>
 
-                        {/* Coluna 4 (Foto ao lado no md pra cima) */}
                         <div className="flex flex-col items-center justify-start md:justify-center">
                             <div className="w-32 h-32 rounded-full border-4 border-indigo-500 flex items-center justify-center overflow-hidden bg-gray-800">
                                 {user.profilePictureUrl ? (
@@ -219,7 +252,6 @@ export default function RegistratorUserAdmin() {
                             </div>
                         </div>
 
-                        {/* Botão (ocupa 4 colunas) */}
                         <div className="md:col-span-4 mt-6 flex justify-center">
                             <button
                                 type="submit"
