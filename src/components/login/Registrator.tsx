@@ -4,12 +4,13 @@ import { IAppUser } from "../../interfaces/AppUser.tsx";
 import { Link } from "react-router-dom";
 
 export default function UserRegistration() {
-    const [user, setUser] = useState<IAppUser>({
+    const [user, setUser] = useState<IAppUser & { confirmPassword: string }>({
         id: 0,
         name: "",
         email: "",
         phone: "",
         passwordHash: "",
+        confirmPassword: "",
         googleId: "",
         profilePictureUrl: "",
         createdAt: new Date().toISOString(),
@@ -61,13 +62,29 @@ export default function UserRegistration() {
         setMessageType(null);
 
         try {
-            await axios.post("https://barbergo-api.onrender.com/api/AppUser/create", user);
+            await axios.post("https://barbergo-api.onrender.com/api/AppUser/register", {
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                password: user.passwordHash,
+                confirmPassword: user.confirmPassword,
+                profilePictureUrl: user.profilePictureUrl,
+                type: user.type,
+            });
             setMessage("Usuário cadastrado com sucesso!");
             setMessageType("success");
         } catch (error: any) {
             if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 409) {
+                const err = error.response;
+
+                if (err.status === 409) {
                     setMessage("Este email já está cadastrado. Por favor, faça login.");
+                    setMessageType("error");
+                } else if (err.status === 400 && err.data?.errors?.ConfirmPassword) {
+                    setMessage(err.data.errors.ConfirmPassword[0]);
+                    setMessageType("error");
+                } else if (err.status === 400 && err.data?.errors?.Password) {
+                    setMessage(err.data.errors.Password[0]);
                     setMessageType("error");
                 } else {
                     setMessage("Erro ao cadastrar usuário. Tente novamente.");
@@ -108,66 +125,28 @@ export default function UserRegistration() {
                     <form className="space-y-5" onSubmit={handleSubmit}>
                         <div>
                             <label className="block text-gray-700">Nome</label>
-                            <input
-                                type="text"
-                                name="name"
-                                placeholder="Digite seu nome"
-                                className="w-full p-3 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                required
-                                value={user.name}
-                                onChange={handleChange}
-                                disabled={isUploading || isSubmitting}
-                            />
+                            <input type="text" name="name" value={user.name} onChange={handleChange} placeholder="Digite seu nome" className="input" required disabled={isUploading || isSubmitting} />
                         </div>
                         <div>
                             <label className="block text-gray-700">E-mail</label>
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="Digite seu e-mail"
-                                className="w-full p-3 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                required
-                                value={user.email}
-                                onChange={handleChange}
-                                disabled={isUploading || isSubmitting}
-                            />
+                            <input type="email" name="email" value={user.email} onChange={handleChange} placeholder="Digite seu e-mail" className="input" required disabled={isUploading || isSubmitting} />
                         </div>
                         <div>
                             <label className="block text-gray-700">Telefone</label>
-                            <input
-                                type="tel"
-                                name="phone"
-                                placeholder="Digite seu telefone"
-                                className="w-full p-3 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                value={user.phone}
-                                onChange={handleChange}
-                                disabled={isUploading || isSubmitting}
-                            />
+                            <input type="tel" name="phone" value={user.phone} onChange={handleChange} placeholder="Digite seu telefone" className="input" disabled={isUploading || isSubmitting} />
                         </div>
                         <div>
                             <label className="block text-gray-700">Senha</label>
-                            <input
-                                type="password"
-                                name="passwordHash"
-                                placeholder="Digite sua senha"
-                                className="w-full p-3 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                required
-                                value={user.passwordHash}
-                                onChange={handleChange}
-                                disabled={isUploading || isSubmitting}
-                            />
+                            <input type="password" name="passwordHash" value={user.passwordHash} onChange={handleChange} placeholder="Digite sua senha" className="input" required disabled={isUploading || isSubmitting} />
                         </div>
-
-                        <label className="block text-gray-700">Foto de Perfil</label>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            name="upload"
-                            className="w-full p-3 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                            onChange={handleImageUpload}
-                            disabled={isUploading || isSubmitting}
-                        />
-
+                        <div>
+                            <label className="block text-gray-700">Confirmar Senha</label>
+                            <input type="password" name="confirmPassword" value={user.confirmPassword} onChange={handleChange} placeholder="Confirme sua senha" className="input" required disabled={isUploading || isSubmitting} />
+                        </div>
+                        <div>
+                            <label className="block text-gray-700">Foto de Perfil</label>
+                            <input type="file" accept="image/*" name="upload" onChange={handleImageUpload} className="input" disabled={isUploading || isSubmitting} />
+                        </div>
                         {(isUploading || isSubmitting) && (
                             <div className="flex items-center justify-center space-x-2 mt-2">
                                 <div className="w-5 h-5 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
@@ -176,15 +155,11 @@ export default function UserRegistration() {
                                 </span>
                             </div>
                         )}
-
-                        <button
-                            type="submit"
-                            className="w-full py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                            disabled={isUploading || isSubmitting}
-                        >
+                        <button type="submit" className="w-full py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed" disabled={isUploading || isSubmitting}>
                             Cadastrar
                         </button>
                     </form>
+
                     <p className="text-center text-sm text-gray-600 mt-5">
                         Já tem uma conta?{' '}
                         <Link to="/login" className="text-indigo-600 hover:underline">
