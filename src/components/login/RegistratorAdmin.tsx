@@ -5,12 +5,15 @@ import { Link } from "react-router-dom";
 import Header from "../header/Header.tsx";
 
 export default function RegistratorUserAdmin() {
-    const [user, setUser] = useState<IAppUser>({
+    const [user, setUser] = useState<
+        IAppUser & { password: string; confirmPassword: string }
+    >({
         id: 0,
         name: "",
         email: "",
         phone: "",
-        passwordHash: "",
+        password: "",
+        confirmPassword: "",
         googleId: "",
         profilePictureUrl: "",
         createdAt: new Date().toISOString(),
@@ -19,7 +22,9 @@ export default function RegistratorUserAdmin() {
 
     const [uploading, setUploading] = useState(false);
     const [uploadMessage, setUploadMessage] = useState("");
-    const [mensagem, setMensagem] = useState<{ texto: string; tipo: "success" | "error" } | null>(null);
+    const [mensagem, setMensagem] = useState<
+        { texto: string; tipo: "success" | "error" } | null
+    >(null);
 
     useEffect(() => {
         if (mensagem) {
@@ -28,8 +33,12 @@ export default function RegistratorUserAdmin() {
         }
     }, [mensagem]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setUser({ ...user, [e.target.name]: e.target.value });
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setUser((prev) => ({
+            ...prev,
+            [name]: name === "type" ? Number(value) : value,
+        }));
     };
 
     const handleImageupload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,7 +59,7 @@ export default function RegistratorUserAdmin() {
             );
 
             if (response.data.secure_url) {
-                setUser(prev => ({ ...prev, profilePictureUrl: response.data.secure_url }));
+                setUser((prev) => ({ ...prev, profilePictureUrl: response.data.secure_url }));
                 setUploadMessage("Foto carregada com sucesso!");
             } else {
                 throw new Error("URL da imagem não retornada.");
@@ -71,13 +80,33 @@ export default function RegistratorUserAdmin() {
             setMensagem({ texto: "Por favor, escolha o tipo de usuário.", tipo: "error" });
             return;
         }
+        if (user.password.length < 6) {
+            setMensagem({ texto: "A senha deve conter no mínimo 6 caracteres.", tipo: "error" });
+            return;
+        }
+        if (user.password !== user.confirmPassword) {
+            setMensagem({ texto: "As senhas não coincidem.", tipo: "error" });
+            return;
+        }
 
         try {
-            await axios.post("https://barbergo-api.onrender.com/api/AppUser/createUserAdmin", user, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+            await axios.post(
+                "https://barbergo-api.onrender.com/api/AppUser/createUserAdmin",
+                {
+                    Name: user.name,
+                    Email: user.email,
+                    Phone: user.phone,
+                    Password: user.password,
+                    ConfirmPassword: user.confirmPassword,
+                    ProfilePictureUrl: user.profilePictureUrl,
+                    Type: user.type,
                 },
-            });
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                }
+            );
 
             setMensagem({ texto: "Usuário cadastrado com sucesso!", tipo: "success" });
 
@@ -86,15 +115,18 @@ export default function RegistratorUserAdmin() {
                 name: "",
                 email: "",
                 phone: "",
-                passwordHash: "",
+                password: "",
+                confirmPassword: "",
                 googleId: "",
                 profilePictureUrl: "",
                 createdAt: new Date().toISOString(),
                 type: 0,
             });
         } catch (error: any) {
-            if (axios.isAxiosError(error) && error.response?.status === 409) {
-                setMensagem({ texto: "E-mail já cadastrado. Faça login.", tipo: "error" });
+            if (axios.isAxiosError(error)) {
+                const msg =
+                    error.response?.data?.message || "Erro ao cadastrar usuário. Tente novamente.";
+                setMensagem({ texto: msg, tipo: "error" });
             } else {
                 setMensagem({ texto: "Erro ao cadastrar usuário. Tente novamente.", tipo: "error" });
             }
@@ -125,8 +157,9 @@ export default function RegistratorUserAdmin() {
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        <div className="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        {/* 1ª fileira: Nome, Email, Telefone */}
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                             <div>
                                 <label className="block mb-1 text-gray-300">Nome</label>
                                 <input
@@ -164,16 +197,32 @@ export default function RegistratorUserAdmin() {
                                     onChange={handleChange}
                                 />
                             </div>
+                        </div>
 
+                        {/* 2ª fileira: Senha, Confirmar Senha, Tipo */}
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                             <div>
                                 <label className="block mb-1 text-gray-300">Senha</label>
                                 <input
                                     type="password"
-                                    name="passwordHash"
+                                    name="password"
                                     placeholder="Digite sua senha"
                                     className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-indigo-500"
                                     required
-                                    value={user.passwordHash}
+                                    value={user.password}
+                                    onChange={handleChange}
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block mb-1 text-gray-300">Confirmar Senha</label>
+                                <input
+                                    type="password"
+                                    name="confirmPassword"
+                                    placeholder="Confirme sua senha"
+                                    className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-indigo-500"
+                                    required
+                                    value={user.confirmPassword}
                                     onChange={handleChange}
                                 />
                             </div>
@@ -185,12 +234,7 @@ export default function RegistratorUserAdmin() {
                                     required
                                     className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-indigo-500"
                                     value={user.type}
-                                    onChange={(e) =>
-                                        setUser({
-                                            ...user,
-                                            type: Number(e.target.value),
-                                        })
-                                    }
+                                    onChange={handleChange}
                                 >
                                     <option value={0} disabled>
                                         Escolha o tipo de usuário
@@ -199,8 +243,11 @@ export default function RegistratorUserAdmin() {
                                     <option value={2}>Usuário</option>
                                 </select>
                             </div>
+                        </div>
 
-                            <div>
+                        {/* 3ª fileira: Upload + preview lado a lado */}
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+                            <div className="flex-1">
                                 <label className="block mb-1 text-gray-300">Foto de Perfil</label>
                                 <input
                                     type="file"
@@ -210,7 +257,7 @@ export default function RegistratorUserAdmin() {
                                     onChange={handleImageupload}
                                     disabled={uploading}
                                 />
-                                <div className="mt-2 text-sm text-indigo-400 flex items-center">
+                                <div className="mt-2 text-sm text-indigo-400 flex items-center min-h-[1.5rem]">
                                     {uploading && (
                                         <svg
                                             className="animate-spin h-5 w-5 mr-2 text-indigo-400"
@@ -236,10 +283,8 @@ export default function RegistratorUserAdmin() {
                                     {uploadMessage}
                                 </div>
                             </div>
-                        </div>
 
-                        <div className="flex flex-col items-center justify-start md:justify-center">
-                            <div className="w-32 h-32 rounded-full border-4 border-indigo-500 flex items-center justify-center overflow-hidden bg-gray-800">
+                            <div className="flex-shrink-0 w-32 h-32 rounded-full border-4 border-indigo-500 overflow-hidden bg-gray-800 flex items-center justify-center">
                                 {user.profilePictureUrl ? (
                                     <img
                                         src={user.profilePictureUrl}
@@ -247,12 +292,15 @@ export default function RegistratorUserAdmin() {
                                         className="w-full h-full object-cover"
                                     />
                                 ) : (
-                                    <span className="text-sm text-gray-400 text-center px-2">Foto de Perfil</span>
+                                    <span className="text-sm text-gray-400 text-center px-2">
+                                        Foto de Perfil
+                                    </span>
                                 )}
                             </div>
                         </div>
 
-                        <div className="md:col-span-4 mt-6 flex justify-center">
+                        {/* Botão enviar */}
+                        <div className="flex justify-center">
                             <button
                                 type="submit"
                                 className="w-full max-w-md py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold text-lg focus:ring-2 focus:ring-indigo-500"
