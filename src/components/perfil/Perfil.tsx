@@ -129,6 +129,12 @@ const Perfil = () => {
                                     >
                                         Cadastrar Novo Administrador
                                     </button>
+                                    <button
+                                        className="w-full mt-4 bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold transition"
+                                        onClick={() => navigate("/PromoverUsuario")}
+                                    >
+                                        Promover Usuario para Administrador
+                                    </button>
                                 </div>
                             )}
                         </div>

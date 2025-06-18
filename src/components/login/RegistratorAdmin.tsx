@@ -149,8 +149,8 @@ export default function RegistratorUserAdmin() {
                     {mensagem && (
                         <div
                             className={`text-center mb-6 p-3 rounded ${mensagem.tipo === "success"
-                                    ? "bg-green-600 text-white"
-                                    : "bg-red-600 text-white"
+                                ? "bg-green-600 text-white"
+                                : "bg-red-600 text-white"
                                 }`}
                         >
                             {mensagem.texto}

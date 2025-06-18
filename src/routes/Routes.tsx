@@ -19,6 +19,7 @@ import HistoryAppointment from "../components/appointment/HistoryAppointiment";
 import BarberHistory from "../components/appointment/BarberHistory";
 import RegistratorUserAdmin from "../components/login/RegistratorAdmin";
 import UpdatePerfil from "../components/perfil/UpdatePerfil";
+import PromoveUserToAdmin from "../components/login/PromoveUsetoAdmin";
 
 
 
@@ -50,6 +51,7 @@ const AppRoutes = () => {
                 <Route path="/Historico" element={<PrivateRoute element={<HistoryAppointment />} />} />
                 <Route path="/HistoricoClientes" element={<PrivateRoute element={<BarberHistory />} />} />
                 <Route path="/CadastrarAdm" element={<PrivateRoute element={<RegistratorUserAdmin />} />} />
+                <Route path="/PromoverUsuario" element={<PrivateRoute element={<PromoveUserToAdmin />} />} />
 
 
 
