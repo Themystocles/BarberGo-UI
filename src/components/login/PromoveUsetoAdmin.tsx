@@ -136,7 +136,7 @@ const PromoveUserToAdmin = () => {
                                     <strong>Telefone:</strong> {user.phone}
                                 </p>
                                 <p>
-                                    <strong>Tipo:</strong> {renderUserType(user.type)}
+                                    <strong>Tipo:</strong> {renderUserType(user.type ?? UserType.Cliente)}
                                 </p>
 
                                 {!confirmPromote ? (
