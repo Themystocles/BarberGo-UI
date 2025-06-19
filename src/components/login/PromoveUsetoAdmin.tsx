@@ -9,7 +9,6 @@ export enum UserType {
     Admin = 1
 }
 
-
 const PromoveUserToAdmin = () => {
     const [email, setEmail] = useState<string>("");
     const [user, setUser] = useState<IAppUser | null>(null);
@@ -53,15 +52,24 @@ const PromoveUserToAdmin = () => {
 
         try {
             const token = localStorage.getItem("token");
-            await axios.post("https://barbergo-api.onrender.com/api/AppUser/PromoverUsuarioparaAdmin", { email }, {
+            const novoTipo = user.type === UserType.Admin ? UserType.Cliente : UserType.Admin;
+
+            await axios.post("https://barbergo-api.onrender.com/api/AppUser/PromoverUsuarioparaAdmin", {
+                email,
+                tipo: novoTipo
+            }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            setMessage(`Usuário ${user.name} promovido a administrador com sucesso.`);
-            setUser({ ...user, type: UserType.Admin });
+            const mensagem = novoTipo === UserType.Admin
+                ? `Usuário ${user.name} promovido a administrador com sucesso.`
+                : `Usuário ${user.name} rebaixado para cliente com sucesso.`;
+
+            setMessage(mensagem);
+            setUser({ ...user, type: novoTipo });
             setConfirmPromote(false);
         } catch (error) {
-            setError("Erro ao promover o usuário.");
+            setError("Erro ao atualizar o tipo do usuário.");
         } finally {
             setPromoting(false);
         }
@@ -74,25 +82,25 @@ const PromoveUserToAdmin = () => {
     return (
         <>
             <Header />
-            <div className="min-h-screen bg-gray-900 text-gray-200 flex flex-col items-center py-10 px-6">
+            <div className="min-h-screen bg-gray-900 text-gray-200 flex flex-col items-center py-10 px-4 sm:px-6">
                 <div className="w-full max-w-3xl">
                     <p className="mb-8 text-xl font-semibold text-center">
                         Apenas Administradores têm acesso a esta tela
                     </p>
 
                     {/* Pesquisa */}
-                    <div className="flex gap-3 mb-8">
+                    <div className="flex flex-col sm:flex-row gap-3 mb-8">
                         <input
                             type="email"
                             placeholder="Digite o email do usuário"
                             value={email}
                             onChange={e => setEmail(e.target.value)}
-                            className="flex-grow px-5 py-3 rounded-md border border-gray-600 bg-gray-800 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-5 py-3 rounded-md border border-gray-600 bg-gray-800 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
                         />
                         <button
                             onClick={GetEmail}
-                            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md transition"
+                            className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md transition"
                         >
                             <FaSearch />
                             Buscar
@@ -110,7 +118,7 @@ const PromoveUserToAdmin = () => {
                     )}
 
                     {message && (
-                        <div className="flex items-center gap-2 justify-center mb-6 p-4 bg-green-800 bg-opacity-40 text-green-300 border border-green-600 rounded">
+                        <div className="flex items-center gap-2 justify-center mb-6 p-4 bg-green-800 bg-opacity-40 text-green-300 border border-green-600 rounded text-center">
                             <FaCheckCircle />
                             <p>{message}</p>
                         </div>
@@ -118,51 +126,47 @@ const PromoveUserToAdmin = () => {
 
                     {/* Dados do usuário */}
                     {user && (
-                        <div className="bg-gray-800 bg-opacity-70 rounded-lg shadow-lg border border-gray-700 p-6 flex items-center gap-8">
+                        <div className="bg-gray-800 bg-opacity-70 rounded-lg shadow-lg border border-gray-700 p-6 flex flex-col sm:flex-row items-center gap-6 sm:gap-8">
                             <img
                                 src={user.profilePictureUrl}
                                 alt="Foto do usuário"
-                                className="w-32 h-32 rounded-lg object-cover border border-gray-600"
+                                className="w-28 h-28 sm:w-32 sm:h-32 rounded-lg object-cover border border-gray-600"
                             />
 
-                            <div className="flex-1 text-gray-100 space-y-2">
-                                <p>
-                                    <strong>Nome:</strong> {user.name}
-                                </p>
-                                <p>
-                                    <strong>Email:</strong> {user.email}
-                                </p>
-                                <p>
-                                    <strong>Telefone:</strong> {user.phone}
-                                </p>
-                                <p>
-                                    <strong>Tipo:</strong> {renderUserType(user.type ?? UserType.Cliente)}
-                                </p>
+                            <div className="flex-1 text-gray-100 space-y-2 w-full">
+                                <p><strong>Nome:</strong> {user.name}</p>
+                                <p><strong>Email:</strong> {user.email}</p>
+                                <p><strong>Telefone:</strong> {user.phone}</p>
+                                <p><strong>Tipo:</strong> {renderUserType(user.type ?? UserType.Cliente)}</p>
 
                                 {!confirmPromote ? (
                                     <button
                                         onClick={() => setConfirmPromote(true)}
-                                        className="mt-4 bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-md transition"
+                                        className="mt-4 bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-md transition w-full sm:w-auto"
                                     >
-                                        Promover a Administrador
+                                        {user.type === UserType.Admin
+                                            ? "Rebaixar para Cliente"
+                                            : "Promover a Administrador"}
                                     </button>
                                 ) : (
                                     <div className="mt-4">
-                                        <p className="text-gray-300 mb-3">
-                                            Tem certeza que deseja promover{" "}
-                                            <strong>{user.name}</strong> a administrador?
+                                        <p className="text-gray-300 mb-3 text-sm sm:text-base">
+                                            Tem certeza que deseja {user.type === UserType.Admin ? "rebaixar" : "promover"}{" "}
+                                            <strong>{user.name}</strong> {user.type === UserType.Admin ? "para cliente" : "a administrador"}?
                                         </p>
-                                        <div className="flex gap-4">
+                                        <div className="flex flex-col sm:flex-row gap-4">
                                             <button
                                                 onClick={PromoveUser}
-                                                className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-md transition disabled:opacity-50"
+                                                className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-md transition disabled:opacity-50 w-full sm:w-auto"
                                                 disabled={promoting}
                                             >
-                                                {promoting ? "Promovendo..." : "Sim, promover"}
+                                                {promoting
+                                                    ? (user.type === UserType.Admin ? "Rebaixando..." : "Promovendo...")
+                                                    : (user.type === UserType.Admin ? "Sim, rebaixar" : "Sim, promover")}
                                             </button>
                                             <button
                                                 onClick={() => setConfirmPromote(false)}
-                                                className="bg-gray-600 hover:bg-gray-700 text-white px-5 py-2 rounded-md transition"
+                                                className="bg-gray-600 hover:bg-gray-700 text-white px-5 py-2 rounded-md transition w-full sm:w-auto"
                                             >
                                                 Cancelar
                                             </button>
@@ -176,5 +180,6 @@ const PromoveUserToAdmin = () => {
             </div>
         </>
     );
-}
+};
+
 export default PromoveUserToAdmin;
