@@ -221,6 +221,16 @@ const LoginWithShowcase = () => {
                             Cadastre-se
                         </Link>
                     </p>
+                    <p className="mt-6 text-center text-sm text-gray-600">
+                        Esqueceu a senha?{" "}
+                        <Link
+                            to="/Recuperar-Senha"
+                            className="text-indigo-600 font-semibold hover:underline"
+                        >
+                            Clique aqui
+                        </Link>
+                    </p>
+
                 </div>
             </div>
 

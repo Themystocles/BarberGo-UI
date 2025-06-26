@@ -20,6 +20,7 @@ import BarberHistory from "../components/appointment/BarberHistory";
 import RegistratorUserAdmin from "../components/login/RegistratorAdmin";
 import UpdatePerfil from "../components/perfil/UpdatePerfil";
 import PromoveUserToAdmin from "../components/login/PromoveUsetoAdmin";
+import RecoveryPassword from "../components/login/RecoveryPassword";
 
 
 
@@ -30,11 +31,13 @@ const AppRoutes = () => {
                 {/* Rota inicial para a tela de Login */}
                 <Route path="/" element={<Login />} />
 
+
                 {/* Páginas públicas */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/registration" element={<Registrator />} />
                 <Route path="/login-success" element={<LoginSuccess />} />
                 <Route path="/CortesDisponíveis" element={<PrivateRoute element={<HaircutsComponent />} />} />
+                <Route path="/Recuperar-Senha" element={<RecoveryPassword />} />
 
                 {/* Página privada */}
                 <Route path="/Home" element={<PrivateRoute element={<Home />} />} />
