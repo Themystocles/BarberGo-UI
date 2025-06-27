@@ -4,21 +4,26 @@ import { IAppUser } from "../../interfaces/AppUser.tsx";
 import { Link } from "react-router-dom";
 
 export default function UserRegistration() {
-    const [user, setUser] = useState<IAppUser & { confirmPassword: string }>({
-        id: 0,
-        name: "",
-        email: "",
-        phone: "",
-        passwordHash: "",
-        confirmPassword: "",
-        googleId: "",
-        profilePictureUrl: "",
-        createdAt: new Date().toISOString(),
-        type: 0,
-    });
+    const [user, setUser] = useState<IAppUser & { confirmPassword: string, recoveryCode: string }>(
+        {
+            id: 0,
+            name: "",
+            email: "",
+            phone: "",
+            passwordHash: "",
+            confirmPassword: "",
+            recoveryCode: "", // NOVO
+            googleId: "",
+            profilePictureUrl: "",
+            createdAt: new Date().toISOString(),
+            type: 0,
+        }
+    );
 
     const [isUploading, setIsUploading] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isSendingCode, setIsSendingCode] = useState(false); // NOVO
+    const [showCodeInput, setShowCodeInput] = useState(false); // NOVO
     const [message, setMessage] = useState<string | null>(null);
     const [messageType, setMessageType] = useState<"success" | "error" | null>(null);
 
@@ -55,6 +60,32 @@ export default function UserRegistration() {
         }
     };
 
+    const handleSendCode = async () => {
+        if (!user.email) {
+            setMessage("Informe um e-mail válido para enviar o código.");
+            setMessageType("error");
+            return;
+        }
+
+        try {
+            setIsSendingCode(true);
+            await axios.post("https://barbergo-api.onrender.com/api/AppUser/send-code", user.email, {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+
+            setShowCodeInput(true); // exibe o campo do código
+            setMessage("Código enviado para o e-mail.");
+            setMessageType("success");
+        } catch (error) {
+            setMessage("Erro ao enviar o código de verificação.");
+            setMessageType("error");
+        } finally {
+            setIsSendingCode(false);
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
@@ -70,28 +101,24 @@ export default function UserRegistration() {
                 confirmPassword: user.confirmPassword,
                 profilePictureUrl: user.profilePictureUrl,
                 type: user.type,
+                recoveryCode: user.recoveryCode, // NOVO
             });
+
             setMessage("Usuário cadastrado com sucesso!");
             setMessageType("success");
         } catch (error: any) {
             if (axios.isAxiosError(error) && error.response) {
                 const err = error.response;
-
                 if (err.status === 409) {
                     setMessage("Este email já está cadastrado. Por favor, faça login.");
-                    setMessageType("error");
-                } else if (err.status === 400 && err.data?.errors?.ConfirmPassword) {
-                    setMessage(err.data.errors.ConfirmPassword[0]);
-                    setMessageType("error");
-                } else if (err.status === 400 && err.data?.errors?.Password) {
-                    setMessage(err.data.errors.Password[0]);
-                    setMessageType("error");
+                } else if (err.status === 400 && err.data?.message) {
+                    setMessage(err.data.message);
                 } else {
-                    setMessage("Erro ao cadastrar usuário. Tente novamente.");
-                    setMessageType("error");
+                    setMessage("Erro ao cadastrar usuário.");
                 }
+                setMessageType("error");
             } else {
-                setMessage("Erro ao cadastrar usuário. Tente novamente.");
+                setMessage("Erro ao cadastrar usuário.");
                 setMessageType("error");
             }
         } finally {
@@ -127,10 +154,38 @@ export default function UserRegistration() {
                             <label className="block text-gray-700">Nome</label>
                             <input type="text" name="name" value={user.name} onChange={handleChange} placeholder="Digite seu nome" className="input" required disabled={isUploading || isSubmitting} />
                         </div>
+
                         <div>
                             <label className="block text-gray-700">E-mail</label>
-                            <input type="email" name="email" value={user.email} onChange={handleChange} placeholder="Digite seu e-mail" className="input" required disabled={isUploading || isSubmitting} />
+                            <div className="flex gap-2">
+                                <input type="email" name="email" value={user.email} onChange={handleChange} placeholder="Digite seu e-mail" className="input flex-1" required disabled={isUploading || isSubmitting} />
+                                <button
+                                    type="button"
+                                    onClick={handleSendCode}
+                                    disabled={isSendingCode || isUploading || isSubmitting}
+                                    className="px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+                                >
+                                    {isSendingCode ? "Enviando..." : "Enviar código"}
+                                </button>
+                            </div>
                         </div>
+
+                        {showCodeInput && (
+                            <div>
+                                <label className="block text-gray-700">Código de Verificação</label>
+                                <input
+                                    type="text"
+                                    name="recoveryCode"
+                                    value={user.recoveryCode}
+                                    onChange={handleChange}
+                                    placeholder="Digite o código enviado"
+                                    className="input"
+                                    required
+                                    disabled={isUploading || isSubmitting}
+                                />
+                            </div>
+                        )}
+
                         <div>
                             <label className="block text-gray-700">Telefone</label>
                             <input type="tel" name="phone" value={user.phone} onChange={handleChange} placeholder="Digite seu telefone" className="input" disabled={isUploading || isSubmitting} />
@@ -147,6 +202,7 @@ export default function UserRegistration() {
                             <label className="block text-gray-700">Foto de Perfil</label>
                             <input type="file" accept="image/*" name="upload" onChange={handleImageUpload} className="input" disabled={isUploading || isSubmitting} />
                         </div>
+
                         {(isUploading || isSubmitting) && (
                             <div className="flex items-center justify-center space-x-2 mt-2">
                                 <div className="w-5 h-5 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
@@ -155,6 +211,7 @@ export default function UserRegistration() {
                                 </span>
                             </div>
                         )}
+
                         <button type="submit" className="w-full py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed" disabled={isUploading || isSubmitting}>
                             Cadastrar
                         </button>
