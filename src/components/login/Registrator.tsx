@@ -75,11 +75,17 @@ export default function UserRegistration() {
                 }
             });
 
-            setShowCodeInput(true); // exibe o campo do código
+            setShowCodeInput(true);
             setMessage("Código enviado para o e-mail.");
             setMessageType("success");
-        } catch (error) {
-            setMessage("Erro ao enviar o código de verificação.");
+        } catch (error: any) {
+            if (axios.isAxiosError(error) && error.response) {
+                // Se o backend retornou um json com mensagem
+                const backendMessage = error.response.data?.message || "Erro ao enviar o código de verificação.";
+                setMessage(backendMessage);
+            } else {
+                setMessage("Erro ao enviar o código de verificação.");
+            }
             setMessageType("error");
         } finally {
             setIsSendingCode(false);
