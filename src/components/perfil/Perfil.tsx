@@ -143,6 +143,9 @@ const Perfil = () => {
                     <p className="text-red-500 text-lg">Erro ao carregar perfil do usuário.</p>
                 )}
             </div>
+            <footer className="fixed bottom-0 left-0 w-full text-center p-4 text-sm text-gray-400 bg-gray-900">
+                © 2025 Barbearia Barba Negra. Todos os direitos reservados.
+            </footer>
         </>
     );
 };
