@@ -42,7 +42,7 @@ const Header = () => {
         >
             {/* Logo + Nome */}
             <div
-                className="flex items-center gap-2 cursor-pointer hover:text-cyan-400 transition"
+                className="flex items-center gap-2 cursor-pointer hover:text-cyan-400 transition max-w-[60%]"
                 onClick={() => navigate("/Home")}
             >
                 {customization?.logoUrl ? (
@@ -55,7 +55,9 @@ const Header = () => {
                 ) : (
                     <FaHome className="text-xl" />
                 )}
-                <h1 className="text-xl md:text-2xl font-bold whitespace-nowrap">
+
+                {/* Nome aparece só em telas sm para cima */}
+                <h1 className="hidden sm:block text-xl md:text-2xl font-bold whitespace-nowrap truncate">
                     {customization?.nomeSistema || "Barbearia Barba Negra"}
                 </h1>
             </div>
