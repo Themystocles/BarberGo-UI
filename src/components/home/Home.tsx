@@ -3,16 +3,20 @@ import { GiScissors } from "react-icons/gi";
 import { FaCalendarAlt, FaUser } from "react-icons/fa";
 import Header from "../header/Header";
 import useUser from "../../hooks/useUser";
+import Footer from "../footer/Footer";
+import { CustomizationContext } from "../../context/CustomizationContext";
+import { useContext } from "react";
 
 const Home = () => {
     const { userType, loading } = useUser();
+    const { customization, loading: loadingCustomization } = useContext(CustomizationContext);
 
     return (
         <div
             className="min-h-screen bg-cover bg-center text-white flex flex-col"
             style={{
-                backgroundImage:
-                    "url('https://i.pinimg.com/originals/19/26/6e/19266e1b4e9597fc43dc5cb056d3100b.jpg')",
+                backgroundImage: `url(${customization?.backgroundUrl})`
+
             }}
         >
             {/* Header */}
@@ -20,7 +24,9 @@ const Home = () => {
 
             {/* Conteúdo Principal */}
             <main className="flex-1 flex flex-col items-center justify-center text-center px-4 bg-black bg-opacity-60">
-                <h2 className="text-4xl font-bold mb-4">Bem-vindo ao sistema da Barbearia</h2>
+                <h2 className="text-4xl font-bold mb-4">
+                    Bem-vindo ao ambiente {customization?.nomeSistema || "Seu Negócio"}
+                </h2>
                 <p className="text-lg text-gray-300 mb-10">
                     Gerencie seus agendamentos, clientes e serviços com facilidade.
                 </p>
@@ -92,11 +98,9 @@ const Home = () => {
                 )}
             </main>
 
-            {/* Rodapé */}
-            <footer className="fixed bottom-0 left-0 w-full text-center p-4 text-sm text-gray-400 bg-gray-900">
-                © 2025 Barbearia Barba Negra. Todos os direitos reservados.
-            </footer>
-        </div>
+            <Footer />
+        </div >
+
     );
 };
 

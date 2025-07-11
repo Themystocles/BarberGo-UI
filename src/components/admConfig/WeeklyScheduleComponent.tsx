@@ -11,7 +11,7 @@ const WeeklyScheduleComponent = () => {
     const [data, setData] = useState<WeeklySchedule[]>([]);
     const [showModal, setShowModal] = useState(false);
     const [selectedItem, setSelectedItem] = useState<WeeklySchedule | null>(null);
-    const [barberId, setBarberId] = useState<number | null>(null); // Agora é só o número
+    const [barberId, setBarberId] = useState<number | null>(null);
 
     const dayNames: Record<number, string> = {
         1: "Segunda-feira",

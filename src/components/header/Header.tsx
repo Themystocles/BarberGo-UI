@@ -1,13 +1,15 @@
-
 import { Link, useNavigate } from "react-router-dom";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useContext } from "react";
 import { FaSignOutAlt, FaChevronDown, FaHome } from "react-icons/fa";
 import { useUserContext } from "../../context/UserContext";
+import { CustomizationContext } from "../../context/CustomizationContext";
 
 const Header = () => {
     const { logoutUser } = useUserContext();
     const navigate = useNavigate();
     const { user, loading } = useUserContext();
+
+    const { customization, loading: loadingCustomization } = useContext(CustomizationContext);
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -22,23 +24,40 @@ const Header = () => {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    if (loading) {
+    if (loading || loadingCustomization) {
         return (
-            <header className="flex justify-between items-center px-4 md:px-8 py-4 bg-gray-900 text-white shadow-md bg-opacity-90">
+            <header
+                className="flex justify-between items-center px-4 md:px-8 py-4 text-white shadow-md bg-opacity-90"
+                style={{ backgroundColor: customization?.corPrimaria || "#111827" }}
+            >
                 <div className="text-white">Carregando...</div>
             </header>
         );
     }
 
     return (
-        <header className="flex justify-between items-center px-4 md:px-8 py-4 bg-gray-900 text-white shadow-md bg-opacity-90">
-            {/* Logo */}
+        <header
+            className="flex justify-between items-center px-4 md:px-8 py-4 text-white shadow-md bg-opacity-90"
+            style={{ backgroundColor: customization?.corPrimaria || "#111827" }}
+        >
+            {/* Logo + Nome */}
             <div
                 className="flex items-center gap-2 cursor-pointer hover:text-cyan-400 transition"
                 onClick={() => navigate("/Home")}
             >
-                <FaHome className="text-xl" />
-                <h1 className="hidden sm:block text-xl md:text-2xl font-bold">Barbearia Barba Negra</h1>
+                {customization?.logoUrl ? (
+                    <img
+                        src={customization.logoUrl}
+                        alt="Logo do sistema"
+                        className="h-10 object-contain rounded-md"
+                        style={{ maxHeight: "40px" }}
+                    />
+                ) : (
+                    <FaHome className="text-xl" />
+                )}
+                <h1 className="text-xl md:text-2xl font-bold whitespace-nowrap">
+                    {customization?.nomeSistema || "Barbearia Barba Negra"}
+                </h1>
             </div>
 
             {/* Perfil + Sair */}
@@ -143,8 +162,6 @@ const Header = () => {
             </div>
         </header>
     );
-
 };
-
 
 export default Header;

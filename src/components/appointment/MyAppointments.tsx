@@ -55,12 +55,7 @@ const MyAppointments = () => {
     };
 
     return (
-        <div
-            className="min-h-screen bg-cover bg-center text-white"
-            style={{
-                backgroundImage: "url('https://i.pinimg.com/originals/19/26/6e/19266e1b4e9597fc43dc5cb056d3100b.jpg')",
-            }}
-        >
+        <div>
             <div className="bg-black bg-opacity-60 min-h-screen">
                 <Header />
 
