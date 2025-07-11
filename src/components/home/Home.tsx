@@ -9,7 +9,7 @@ import { useContext } from "react";
 
 const Home = () => {
     const { userType, loading } = useUser();
-    const { customization, loading: loadingCustomization } = useContext(CustomizationContext);
+    const { customization } = useContext(CustomizationContext);
 
     return (
         <div
