@@ -21,6 +21,7 @@ import RegistratorUserAdmin from "../components/login/RegistratorAdmin";
 import UpdatePerfil from "../components/perfil/UpdatePerfil";
 import PromoveUserToAdmin from "../components/login/PromoveUsetoAdmin";
 import RecoveryPassword from "../components/login/RecoveryPassword";
+import SystemCustomization from "../components/systemCustomization/SystemCustomization";
 
 
 
@@ -55,6 +56,9 @@ const AppRoutes = () => {
                 <Route path="/HistoricoClientes" element={<PrivateRoute element={<BarberHistory />} />} />
                 <Route path="/CadastrarAdm" element={<PrivateRoute element={<RegistratorUserAdmin />} />} />
                 <Route path="/PromoverUsuario" element={<PrivateRoute element={<PromoveUserToAdmin />} />} />
+                <Route path="/SystemCustomization" element={<PrivateRoute element={<SystemCustomization />} />} />
+
+                SystemCustomization
 
 
 

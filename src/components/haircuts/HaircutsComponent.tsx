@@ -1,16 +1,18 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Haircut } from "../../interfaces/Haircut";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import Header from "../header/Header";
 import UpdateHaircutModal from "../haircuts/UpdateHairCutModal";
 import useUser from "../../hooks/useUser";
+import { CustomizationContext } from "../../context/CustomizationContext";
 
 const HaircutsComponent = () => {
     const [haircuts, setHaircuts] = useState<Haircut[]>([]);
     const [showModal, setShowModal] = useState(false);
     const [selectedHaircut, setSelectedHaircut] = useState<Haircut | null>(null);
     const { userType } = useUser();
+    const { customization } = useContext(CustomizationContext);
 
     useEffect(() => {
         const fetchHaircuts = async () => {
@@ -41,7 +43,7 @@ const HaircutsComponent = () => {
     return (
         <>
             <Header />
-            <div className="min-h-screen bg-gradient-to-r from-gray-900 to-gray-800 text-white px-4 py-12 flex flex-col items-center">
+            <div className="min-h-screen text-white px-4 py-12 flex flex-col items-center" style={{ backgroundColor: customization.backgroundColor }}>
                 <section className="max-w-4xl text-center mb-12 px-4">
                     <h1 className="text-4xl md:text-5xl font-extrabold mb-4 tracking-wide">
                         Conheça a Barbearia Barba Negra

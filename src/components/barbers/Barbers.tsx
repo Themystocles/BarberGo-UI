@@ -1,11 +1,14 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { IAppUser } from "../../interfaces/AppUser";
 import Header from "../header/Header";
 import { useNavigate } from "react-router-dom";
 
+import { CustomizationContext } from "../../context/CustomizationContext";
+
 const Barbers = () => {
     const [barbersList, setBarbersList] = useState<IAppUser[]>([]);
+    const { customization } = useContext(CustomizationContext);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -29,7 +32,10 @@ const Barbers = () => {
     return (
         <>
             <Header />
-            <div className="min-h-screen bg-gradient-to-r from-gray-800 to-gray-900 text-white py-10 px-4">
+            <div
+                className="min-h-screen text-white py-10 px-4"
+                style={{ backgroundColor: customization.backgroundColor }}
+            >
                 <h2 className="text-3xl font-bold text-center mb-8">Nossos Barbeiros</h2>
 
                 {barbersList.length === 0 ? (

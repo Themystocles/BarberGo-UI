@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import Header from "../header/Header";
 import { useNavigate, useLocation } from "react-router-dom";
 import { IAppUser } from "../../interfaces/AppUser";
 import { AlertCircle } from "lucide-react";
+import { CustomizationContext } from "../../context/CustomizationContext";
 
 const Appointment = () => {
     const location = useLocation();
@@ -17,6 +18,7 @@ const Appointment = () => {
     const [barbersList, setBarbersList] = useState<{ id: number; name: string }[]>([]);
     const [idUser, setIdUser] = useState<IAppUser | any>();
     const selectedBarber = barbersList.find((b) => b.id === barber);
+    const { customization } = useContext(CustomizationContext);
 
     const navigate = useNavigate();
 
@@ -90,7 +92,7 @@ const Appointment = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-r from-gray-800 to-gray-900 text-white flex flex-col">
+        <div className="min-h-screen bg-gradient-to-r text-white flex flex-col" style={{ backgroundColor: customization.backgroundColor }}>
             <Header />
             <main className="flex-1 flex flex-col items-center px-4 py-10">
                 <div className="w-full max-w-5xl flex flex-col gap-6">

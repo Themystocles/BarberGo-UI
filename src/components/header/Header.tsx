@@ -57,8 +57,14 @@ const Header = () => {
                 )}
 
                 {/* Nome aparece só em telas sm para cima */}
-                <h1 className="hidden sm:block text-xl md:text-2xl font-bold whitespace-nowrap truncate">
-                    {customization?.nomeSistema || "Barbearia Barba Negra"}
+                <h1
+                    className={`hidden sm:block text-xl md:text-2xl font-bold whitespace-nowrap truncate`}
+                    style={{
+
+                        color: customization.corSecundaria
+                    }}
+                >
+                    {customization?.nomeSistema}
                 </h1>
             </div>
 
@@ -144,6 +150,15 @@ const Header = () => {
                                 onClick={() => setDropdownOpen(false)}
                             >
                                 Administração
+                            </Link>
+                        )}
+                        {user?.type === 1 && (
+                            <Link
+                                to="/SystemCustomization"
+                                className="block px-4 py-2 hover:bg-indigo-500 transition"
+                                onClick={() => setDropdownOpen(false)}
+                            >
+                                Estilos
                             </Link>
                         )}
 
