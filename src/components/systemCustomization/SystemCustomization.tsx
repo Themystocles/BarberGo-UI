@@ -11,6 +11,7 @@ interface StyleConfig {
     corSecundaria: string;
     backgroundUrl: string;
     backgroundColor: string;
+    cardsColors: string;
     descricao: string;
 }
 
@@ -23,6 +24,7 @@ const SystemCustomization = () => {
         corSecundaria: "#6b7280",
         backgroundUrl: "",
         backgroundColor: "#ffffff",
+        cardsColors: "#ffffff",
         descricao: "",
     });
 
@@ -45,6 +47,7 @@ const SystemCustomization = () => {
                     corSecundaria: response.data.corSecundaria || "#6b7280",
                     backgroundUrl: response.data.backgroundUrl || "",
                     backgroundColor: response.data.backgroundColor || "#ffffff",
+                    cardsColors: response.data.cardsColors || "#ffffff",
                     descricao: response.data.descricao || "",
                 });
             } catch (error) {
@@ -75,6 +78,7 @@ const SystemCustomization = () => {
                     corSecundaria: config.corSecundaria,
                     backgroundUrl: config.backgroundUrl,
                     backgroundColor: config.backgroundColor,
+                    cardsColors: config.cardsColors,
                     descricao: config.descricao,
                 },
                 {

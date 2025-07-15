@@ -76,8 +76,9 @@ export const CustomizationProvider = ({ children }: ProviderProps) => {
                     cardsColors: configData.cardsColors || "",
                     descricao: configData.descricao || ""
                 });
-            } catch (error) {
-                console.error(error);
+            } catch (error: any) {
+                // mostra o erro do backend que indica qual campo tá inválido
+                console.log(error.response?.data?.errors || error.message || error);
             } finally {
                 setLoading(false);
             }
