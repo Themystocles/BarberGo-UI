@@ -8,6 +8,7 @@ interface Customization {
     corSecundaria: string;
     backgroundUrl: string;
     backgroundColor: string;
+    CardsColors: string;
     descricao: string;
 }
 
@@ -25,6 +26,7 @@ export const CustomizationContext = createContext<CustomizationContextType>({
         corSecundaria: "",
         backgroundUrl: "",
         backgroundColor: "",
+        CardsColors: "",
         descricao: ""
     },
     loading: true,
@@ -43,6 +45,7 @@ export const CustomizationProvider = ({ children }: ProviderProps) => {
         corSecundaria: "",
         backgroundUrl: "",
         backgroundColor: "",
+        CardsColors: "",
         descricao: ""
     });
     const [loading, setLoading] = useState(true);
@@ -70,6 +73,7 @@ export const CustomizationProvider = ({ children }: ProviderProps) => {
                     corSecundaria: configData.corSecundaria || "",
                     backgroundUrl: configData.backgroundUrl || "",
                     backgroundColor: configData.backgroundColor || "",
+                    CardsColors: configData.cardsColor || "",
                     descricao: configData.descricao || ""
                 });
             } catch (error) {
