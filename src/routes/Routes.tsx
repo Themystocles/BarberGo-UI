@@ -22,7 +22,7 @@ import UpdatePerfil from "../components/perfil/UpdatePerfil";
 import PromoveUserToAdmin from "../components/login/PromoveUsetoAdmin";
 import RecoveryPassword from "../components/login/RecoveryPassword";
 import SystemCustomization from "../components/systemCustomization/SystemCustomization";
-import CreateFeedback from "../components/barbers/CreateFeedback";
+
 
 
 
@@ -58,7 +58,7 @@ const AppRoutes = () => {
                 <Route path="/CadastrarAdm" element={<PrivateRoute element={<RegistratorUserAdmin />} />} />
                 <Route path="/PromoverUsuario" element={<PrivateRoute element={<PromoveUserToAdmin />} />} />
                 <Route path="/SystemCustomization" element={<PrivateRoute element={<SystemCustomization />} />} />
-                <Route path="/FeedbackBarbeiro" element={<PrivateRoute element={<CreateFeedback />} />} />
+
 
                 SystemCustomization
 
