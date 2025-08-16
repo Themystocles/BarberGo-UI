@@ -2,31 +2,33 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { IAppUser } from "../../interfaces/AppUser";
 import Header from "../header/Header";
-import { useNavigate } from "react-router-dom";
-import { CustomizationContext } from "../../context/CustomizationContext";
 import Footer from "../footer/Footer";
+import { CustomizationContext } from "../../context/CustomizationContext";
 import { IFeedback } from "../../interfaces/IFeedback";
+import CreateFeedback from "./CreateFeedback"; // Modal
 
 const Barbers = () => {
     const [barbersList, setBarbersList] = useState<IAppUser[]>([]);
     const [commentsByBarber, setCommentsByBarber] = useState<{ [barberId: number]: IFeedback[] }>({});
     const [visibleComments, setVisibleComments] = useState<number | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedBarberId, setSelectedBarberId] = useState<number | null>(null);
+
     const { customization } = useContext(CustomizationContext);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchBarbers = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const response = await axios.get("https://barbergo-api.onrender.com/api/WeeklySchedule/barbers", {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+                const response = await axios.get(
+                    "https://barbergo-api.onrender.com/api/WeeklySchedule/barbers",
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
                 setBarbersList(response.data);
             } catch (error) {
                 console.error("Erro ao buscar barbeiros:", error);
             }
         };
-
         fetchBarbers();
     }, []);
 
@@ -38,11 +40,10 @@ const Barbers = () => {
 
         if (!commentsByBarber[barberId]) {
             try {
-                const response = await axios.get(`https://localhost:7032/api/Feedback/get/${barberId}`);
-                setCommentsByBarber(prev => ({
-                    ...prev,
-                    [barberId]: response.data
-                }));
+                const response = await axios.get(
+                    `https://barbergo-api.onrender.com/api/Feedback/get/${barberId}`
+                );
+                setCommentsByBarber(prev => ({ ...prev, [barberId]: response.data }));
             } catch (error) {
                 console.error(`Erro ao buscar comentários do barbeiro ${barberId}:`, error);
             }
@@ -51,9 +52,15 @@ const Barbers = () => {
         setVisibleComments(barberId);
     };
 
+    const handleComment = (barberId: number) => {
+        setSelectedBarberId(barberId);
+        setIsModalOpen(true);
+    };
+
     return (
         <>
             <Header />
+
             <div
                 className="min-h-screen text-white py-10 px-4"
                 style={{ backgroundColor: customization.backgroundColor }}
@@ -89,14 +96,23 @@ const Barbers = () => {
                                     <p className="text-sm text-gray-400 mt-1">{barber.email}</p>
                                     <p className="text-sm text-gray-400 mb-4">{barber.phone}</p>
 
-                                    <button
-                                        className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-xl transition duration-200 mt-2"
-                                        onClick={() => navigate("/agendamentos", { state: { barberId: barber.id } })}
-                                    >
-                                        Agendar
-                                    </button>
+                                    <div className="flex gap-2 mt-2">
+                                        <button
+                                            className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-xl transition duration-200"
+                                            // Exemplo: abrir agendamento (mantive como antes)
+                                            onClick={() => console.log("Agendar:", barber.id)}
+                                        >
+                                            Agendar
+                                        </button>
 
-                                    {/* Comentários no final do card */}
+                                        <button
+                                            className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-xl transition duration-200"
+                                            onClick={() => handleComment(barber.id)}
+                                        >
+                                            Comentar
+                                        </button>
+                                    </div>
+
                                     <div className="w-full mt-4 text-left">
                                         <span
                                             onClick={() => handleToggleComments(barber.id)}
@@ -104,23 +120,25 @@ const Barbers = () => {
                                         >
                                             {visibleComments === barber.id
                                                 ? "Ocultar comentários"
-                                                : "Ver comentários"}
+                                                : `Ver comentários (${feedbacks.length})`}
                                         </span>
 
                                         {visibleComments === barber.id && (
-                                            <div className="mt-2 max-h-40 overflow-y-auto space-y-2 text-sm bg-gray-900 p-3 rounded-xl">
+                                            <div className="mt-2 max-h-48 overflow-y-auto space-y-3 text-sm bg-gray-900 p-4 rounded-xl scrollbar-hide">
                                                 {feedbacks.length === 0 ? (
-                                                    <p className="text-gray-500 italic">Sem comentários.</p>
+                                                    <p className="text-gray-400 italic text-center">Sem comentários.</p>
                                                 ) : (
                                                     feedbacks.map((feedback) => (
-                                                        <div key={feedback.id} className="border-b border-gray-700 pb-2">
-                                                            <p className="text-indigo-300 font-semibold">
-                                                                {feedback.appUserName}
-                                                            </p>
-                                                            <p className="text-gray-300">{feedback.comment}</p>
-                                                            <p className="text-yellow-400 text-xs">
-                                                                Nota: {feedback.rating}/5
-                                                            </p>
+                                                        <div
+                                                            key={feedback.id}
+                                                            className="bg-gray-800 p-3 rounded-lg shadow-inner hover:bg-gray-700 transition duration-200"
+                                                        >
+                                                            <p className="text-indigo-300 font-semibold">{feedback.appUserName}</p>
+                                                            <p className="text-gray-300 mt-1">{feedback.comment}</p>
+                                                            <div className="mt-1 flex items-center gap-1">
+                                                                <span className="text-yellow-400 font-bold">{'★'.repeat(feedback.rating)}</span>
+                                                                <span className="text-gray-400 text-xs">({feedback.rating}/5)</span>
+                                                            </div>
                                                         </div>
                                                     ))
                                                 )}
@@ -133,7 +151,16 @@ const Barbers = () => {
                     </div>
                 )}
             </div>
+
             <Footer />
+
+            {/* Modal de Feedback */}
+            {isModalOpen && selectedBarberId !== null && (
+                <CreateFeedback
+                    barberId={selectedBarberId}
+                    onClose={() => setIsModalOpen(false)}
+                />
+            )}
         </>
     );
 };
