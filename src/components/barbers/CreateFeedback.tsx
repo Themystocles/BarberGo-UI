@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { IFeedback } from "../../interfaces/IFeedback";
+import { IFeedbackCreate } from "../../interfaces/IFeedbackCreate";
 import axios, { AxiosError } from "axios";
 
 interface CreateFeedbackProps {
@@ -38,7 +38,7 @@ const CreateFeedback = ({ barberId, onClose }: CreateFeedbackProps) => {
             return;
         }
 
-        const newFeedback: IFeedback = {
+        const newFeedback: IFeedbackCreate = {
             appUserId: user,
             barberId,
             comment,
