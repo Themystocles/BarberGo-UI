@@ -241,11 +241,11 @@ const LoginWithShowcase = () => {
                 </div>
             </div>
 
-            {/* === Versão mobile - imagem + resumo + cortes + formulário === */}
+            {/* === Versão mobile - carrossel contínuo + formulário === */}
             <div className="md:hidden w-full bg-white flex flex-col min-h-screen overflow-y-scroll">
 
                 {/* Imagem e resumo */}
-                <div className="relative h-80 w-full">
+                <div className="relative h-64 w-full">
                     <img
                         src="https://d2zdpiztbgorvt.cloudfront.net/region1/br/293956/biz_photo/394459b035ce4205a0ddb43a053874-barbearia-barba-negra-biz-photo-567f5ccdfb0a401690edd11f14ad92-booksy.jpeg"
                         alt="Barbearia Barba Negra"
@@ -265,29 +265,64 @@ const LoginWithShowcase = () => {
                     <h2 className="text-xl font-bold mb-2">Nossos Cortes</h2>
                     <p className="mb-4 text-gray-600 max-w-md">Confira alguns dos cortes que oferecemos...</p>
 
-                    <div className="flex overflow-x-auto gap-4 pb-4">
-                        {haircuts.length === 0 && (
-                            <p className="text-gray-500 whitespace-nowrap">Carregando cortes...</p>
-                        )}
-                        {haircuts.map((h) => (
-                            <div
-                                key={h.id}
-                                className="min-w-[120px] bg-gray-100 rounded-lg overflow-hidden cursor-default shadow-md flex-shrink-0"
-                                title={`${h.name} - R$ ${h.preco.toFixed(2)}`}
-                            >
-                                <img
-                                    src={h.imagePath}
-                                    alt={h.name}
-                                    className="w-full h-24 object-cover"
-                                    loading="lazy"
-                                />
-                                <div className="p-2 text-center">
-                                    <h3 className="text-sm font-semibold truncate">{h.name}</h3>
-                                    <p className="text-xs text-indigo-600">R$ {h.preco.toFixed(2)}</p>
-                                </div>
+                    {haircuts.length >= 5 ? (
+                        <div className="overflow-hidden w-full relative">
+                            <div className="flex whitespace-nowrap animate-marquee-mobile">
+                                {[...haircuts, ...haircuts].map((h, index) => (
+                                    <div
+                                        key={index}
+                                        className="inline-block min-w-[120px] bg-gray-900 bg-opacity-70 rounded-lg overflow-hidden shadow-lg cursor-default transform hover:scale-105 transition-transform mx-2"
+                                        title={`${h.name} - R$ ${h.preco.toFixed(2)}`}
+                                    >
+                                        <img
+                                            src={h.imagePath}
+                                            alt={h.name}
+                                            className="w-full h-24 object-cover"
+                                            loading="lazy"
+                                        />
+                                        <div className="p-2 text-center">
+                                            <h3 className="text-sm font-semibold truncate">{h.name}</h3>
+                                            <p className="text-xs text-indigo-400">R$ {h.preco.toFixed(2)}</p>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
+
+                            <style>
+                                {`
+            @keyframes marquee-mobile {
+              0% { transform: translateX(0); }
+              100% { transform: translateX(-50%); }
+            }
+            .animate-marquee-mobile {
+              display: flex;
+              animation: marquee-mobile 40s linear infinite;
+            }
+          `}
+                            </style>
+                        </div>
+                    ) : (
+                        <div className="flex gap-4 overflow-x-auto">
+                            {haircuts.map((h) => (
+                                <div
+                                    key={h.id}
+                                    className="min-w-[120px] bg-gray-100 rounded-lg overflow-hidden cursor-default shadow-md flex-shrink-0"
+                                    title={`${h.name} - R$ ${h.preco.toFixed(2)}`}
+                                >
+                                    <img
+                                        src={h.imagePath}
+                                        alt={h.name}
+                                        className="w-full h-24 object-cover"
+                                        loading="lazy"
+                                    />
+                                    <div className="p-2 text-center">
+                                        <h3 className="text-sm font-semibold truncate">{h.name}</h3>
+                                        <p className="text-xs text-indigo-600">R$ {h.preco.toFixed(2)}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </section>
 
                 {/* Formulário */}
@@ -371,6 +406,7 @@ const LoginWithShowcase = () => {
                 </div>
             </div>
         </div>
+
     );
 };
 
