@@ -241,10 +241,134 @@ const LoginWithShowcase = () => {
                 </div>
             </div>
 
-            {/* Mobile */}
+            {/* === Versão mobile - imagem + resumo + cortes + formulário === */}
             <div className="md:hidden w-full bg-white flex flex-col min-h-screen overflow-y-scroll">
-                {/* Conteúdo mobile como antes */}
-                {/* ... */}
+
+                {/* Imagem e resumo */}
+                <div className="relative h-80 w-full">
+                    <img
+                        src="https://d2zdpiztbgorvt.cloudfront.net/region1/br/293956/biz_photo/394459b035ce4205a0ddb43a053874-barbearia-barba-negra-biz-photo-567f5ccdfb0a401690edd11f14ad92-booksy.jpeg"
+                        alt="Barbearia Barba Negra"
+                        className="absolute inset-0 w-full h-full object-cover object-top"
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-60"></div>
+                    <div className="relative z-10 p-4 text-white flex flex-col justify-center h-full">
+                        <h1 className="text-3xl font-bold drop-shadow mb-2">Barbearia Barba Negra</h1>
+                        <p className="text-sm drop-shadow max-w-xs leading-snug">
+                            Ambiente acolhedor, profissionais experientes e os melhores cortes para realçar seu estilo.
+                        </p>
+                    </div>
+                </div>
+
+                {/* Cortes */}
+                <section className="p-4">
+                    <h2 className="text-xl font-bold mb-2">Nossos Cortes</h2>
+                    <p className="mb-4 text-gray-600 max-w-md">Confira alguns dos cortes que oferecemos...</p>
+
+                    <div className="flex overflow-x-auto gap-4 pb-4">
+                        {haircuts.length === 0 && (
+                            <p className="text-gray-500 whitespace-nowrap">Carregando cortes...</p>
+                        )}
+                        {haircuts.map((h) => (
+                            <div
+                                key={h.id}
+                                className="min-w-[120px] bg-gray-100 rounded-lg overflow-hidden cursor-default shadow-md flex-shrink-0"
+                                title={`${h.name} - R$ ${h.preco.toFixed(2)}`}
+                            >
+                                <img
+                                    src={h.imagePath}
+                                    alt={h.name}
+                                    className="w-full h-24 object-cover"
+                                    loading="lazy"
+                                />
+                                <div className="p-2 text-center">
+                                    <h3 className="text-sm font-semibold truncate">{h.name}</h3>
+                                    <p className="text-xs text-indigo-600">R$ {h.preco.toFixed(2)}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                {/* Formulário */}
+                <div className="flex flex-col justify-center items-center p-6">
+                    <div className="w-full max-w-md">
+                        <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">
+                            Bem-vindo de volta
+                        </h2>
+
+                        {error && (
+                            <p className="text-red-600 text-center mb-4 font-semibold">{error}</p>
+                        )}
+                        {successMessage && (
+                            <p className="text-green-600 text-center mb-4 font-semibold">
+                                {successMessage}
+                            </p>
+                        )}
+
+                        <form className="space-y-6" onSubmit={handleSubmit}>
+                            <div>
+                                <label htmlFor="email" className="block text-gray-700 font-semibold mb-2">
+                                    E-mail
+                                </label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    placeholder="Digite seu e-mail"
+                                    className="w-full p-3 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    required
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    autoComplete="username"
+                                />
+                            </div>
+
+                            <div>
+                                <label htmlFor="password" className="block text-gray-700 font-semibold mb-2">
+                                    Senha
+                                </label>
+                                <input
+                                    type="password"
+                                    id="password"
+                                    placeholder="Digite sua senha"
+                                    className="w-full p-3 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    required
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    autoComplete="current-password"
+                                />
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={isLoading}
+                                className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition disabled:opacity-50"
+                            >
+                                {isLoading ? "Entrando..." : "Entrar"}
+                            </button>
+                        </form>
+
+                        <div className="mt-6">
+                            <button
+                                onClick={handleGoogleLogin}
+                                className="w-full flex items-center justify-center gap-2 border border-blue-600 rounded-lg px-4 py-2 text-blue-600 bg-white hover:bg-blue-600 hover:text-white transition"
+                            >
+                                <FcGoogle size={24} />
+                                Entrar com Google
+                            </button>
+                        </div>
+
+                        <p className="mt-6 text-center text-sm text-gray-600">
+                            Não tem uma conta?{" "}
+                            <Link
+                                to="/registration"
+                                className="text-indigo-600 font-semibold hover:underline"
+                            >
+                                Cadastre-se
+                            </Link>
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     );
