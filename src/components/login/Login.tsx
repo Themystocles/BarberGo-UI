@@ -15,6 +15,9 @@ const LoginWithShowcase = () => {
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [haircuts, setHaircuts] = useState<Haircut[]>([]);
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    const visibleCountDesktop = 4;
 
     useEffect(() => {
         document.body.style.overflow = "hidden";
@@ -33,19 +36,30 @@ const LoginWithShowcase = () => {
                 );
                 setHaircuts(res.data);
             } catch (e) {
-
+                console.error("Erro ao buscar cortes", e);
             }
         };
         fetchHaircuts();
     }, []);
 
+    // Carrossel loop infinito desktop
+    useEffect(() => {
+        if (haircuts.length === 0) return;
+
+        const interval = setInterval(() => {
+            setCurrentIndex((prev) =>
+                prev + 1 >= haircuts.length ? 0 : prev + 1
+            );
+        }, 4000); // mais lento, 4 segundos
+
+        return () => clearInterval(interval);
+    }, [haircuts]);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        console.log("==> Enviando login");
         setIsLoading(true);
         const success = await login(email, password);
-        console.log("==> Resultado login:", success);
         if (success) {
             await refreshUser();
             navigate("/home");
@@ -82,9 +96,47 @@ const LoginWithShowcase = () => {
         }, 500);
     };
 
+    const renderHaircutCards = () => {
+        if (haircuts.length === 0) return <p className="text-gray-300">Carregando cortes...</p>;
+
+        // Duplicar os cards para loop infinito
+        const loopHaircuts = [...haircuts, ...haircuts];
+
+        return (
+            <div className="overflow-hidden w-full">
+                <div
+                    className="flex transition-transform duration-[1000ms] ease-linear" // mais lenta e suave
+                    style={{ transform: `translateX(-${(currentIndex * 100) / visibleCountDesktop}%)` }}
+                >
+                    {loopHaircuts.map((h, index) => (
+                        <div
+                            key={index}
+                            className="flex-shrink-0 p-2"
+                            style={{ width: `${100 / visibleCountDesktop}%` }}
+                            title={`${h.name} - R$ ${h.preco.toFixed(2)}`}
+                        >
+                            <div className="bg-gray-900 bg-opacity-70 rounded-lg overflow-hidden shadow-lg cursor-default transform hover:scale-105 transition-transform">
+                                <img
+                                    src={h.imagePath}
+                                    alt={h.name}
+                                    className="w-full h-32 object-cover"
+                                    loading="lazy"
+                                />
+                                <div className="p-2 text-center">
+                                    <h3 className="text-sm font-semibold truncate">{h.name}</h3>
+                                    <p className="text-xs text-indigo-400">R$ {h.preco.toFixed(2)}</p>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    };
+
     return (
         <div className="flex min-h-screen">
-            {/* === Lado esquerdo desktop (imagem + cortes) === */}
+            {/* === Lado esquerdo desktop === */}
             <div className="relative hidden md:flex md:w-1/2 h-screen flex-col">
                 <img
                     src="https://d2zdpiztbgorvt.cloudfront.net/region1/br/293956/biz_photo/394459b035ce4205a0ddb43a053874-barbearia-barba-negra-biz-photo-567f5ccdfb0a401690edd11f14ad92-booksy.jpeg"
@@ -92,48 +144,21 @@ const LoginWithShowcase = () => {
                     className="absolute inset-0 w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-60"></div>
-
                 <div className="relative z-10 flex flex-col justify-between p-12 text-white w-full h-full">
                     <div>
-                        <h1 className="text-4xl font-extrabold mb-6 drop-shadow-lg">
-                            Barbearia Barba Negra
-                        </h1>
+                        <h1 className="text-4xl font-extrabold mb-6 drop-shadow-lg">Barbearia Barba Negra</h1>
                         <p className="text-lg max-w-lg leading-relaxed drop-shadow mb-8">
                             Ambiente acolhedor, profissionais experientes e os melhores cortes para realçar seu estilo.
                             Explore nossos cortes abaixo e prepare-se para uma experiência única.
                         </p>
                     </div>
 
-                    {/* Título da seção cortes */}
                     <div>
                         <h2 className="text-3xl font-bold mb-4 drop-shadow">Nossos Cortes</h2>
                         <p className="mb-6 max-w-md drop-shadow text-indigo-300">
                             Confira alguns dos cortes que oferecemos e escolha seu favorito!
                         </p>
-
-                        <div className="flex flex-wrap gap-4 max-w-xl">
-                            {haircuts.length === 0 && (
-                                <p className="text-gray-300">Carregando cortes...</p>
-                            )}
-                            {haircuts.map((h) => (
-                                <div
-                                    key={h.id}
-                                    className="bg-gray-900 bg-opacity-70 rounded-lg overflow-hidden w-32 cursor-default shadow-lg transform hover:scale-105 transition-transform"
-                                    title={`${h.name} - R$ ${h.preco.toFixed(2)}`}
-                                >
-                                    <img
-                                        src={h.imagePath}
-                                        alt={h.name}
-                                        className="w-full h-20 object-cover"
-                                        loading="lazy"
-                                    />
-                                    <div className="p-2 text-center">
-                                        <h3 className="text-sm font-semibold truncate">{h.name}</h3>
-                                        <p className="text-xs text-indigo-400">R$ {h.preco.toFixed(2)}</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                        {renderHaircutCards()}
                     </div>
                 </div>
             </div>
@@ -141,27 +166,13 @@ const LoginWithShowcase = () => {
             {/* === Lado direito desktop (formulário) === */}
             <div className="hidden md:flex md:w-1/2 justify-center items-center bg-white min-h-screen p-8">
                 <div className="w-full max-w-md">
-                    <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">
-                        Bem-vindo de volta
-                    </h2>
-
-                    {error && (
-                        <p className="text-red-600 text-center mb-4 font-semibold">{error}</p>
-                    )}
-                    {successMessage && (
-                        <p className="text-green-600 text-center mb-4 font-semibold">
-                            {successMessage}
-                        </p>
-                    )}
+                    <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">Bem-vindo de volta</h2>
+                    {error && <p className="text-red-600 text-center mb-4 font-semibold">{error}</p>}
+                    {successMessage && <p className="text-green-600 text-center mb-4 font-semibold">{successMessage}</p>}
 
                     <form className="space-y-6" onSubmit={handleSubmit}>
                         <div>
-                            <label
-                                htmlFor="email"
-                                className="block text-gray-700 font-semibold mb-2"
-                            >
-                                E-mail
-                            </label>
+                            <label htmlFor="email" className="block text-gray-700 font-semibold mb-2">E-mail</label>
                             <input
                                 type="email"
                                 id="email"
@@ -175,12 +186,7 @@ const LoginWithShowcase = () => {
                         </div>
 
                         <div>
-                            <label
-                                htmlFor="password"
-                                className="block text-gray-700 font-semibold mb-2"
-                            >
-                                Senha
-                            </label>
+                            <label htmlFor="password" className="block text-gray-700 font-semibold mb-2">Senha</label>
                             <input
                                 type="password"
                                 id="password"
@@ -207,38 +213,21 @@ const LoginWithShowcase = () => {
                             onClick={handleGoogleLogin}
                             className="w-full flex items-center justify-center gap-2 border border-blue-600 rounded-lg px-4 py-2 text-blue-600 bg-white hover:bg-blue-600 hover:text-white transition"
                         >
-                            <FcGoogle size={24} />
-                            Entrar com Google
+                            <FcGoogle size={24} /> Entrar com Google
                         </button>
                     </div>
 
                     <p className="mt-6 text-center text-sm text-gray-600">
-                        Não tem uma conta?{" "}
-                        <Link
-                            to="/registration"
-                            className="text-indigo-600 font-semibold hover:underline"
-                        >
-                            Cadastre-se
-                        </Link>
+                        Não tem uma conta? <Link to="/registration" className="text-indigo-600 font-semibold hover:underline">Cadastre-se</Link>
                     </p>
                     <p className="mt-6 text-center text-sm text-gray-600">
-                        Esqueceu a senha?{" "}
-                        <Link
-                            to="/Recuperar-Senha"
-                            className="text-indigo-600 font-semibold hover:underline"
-                        >
-                            Clique aqui
-                        </Link>
+                        Esqueceu a senha? <Link to="/Recuperar-Senha" className="text-indigo-600 font-semibold hover:underline">Clique aqui</Link>
                     </p>
-
                 </div>
             </div>
 
-            {/* === Versão mobile - imagem + resumo + cortes + formulário === */}
+            {/* === Mobile === */}
             <div className="md:hidden w-full bg-white flex flex-col min-h-screen overflow-y-scroll">
-
-
-
                 <div className="relative h-80 w-full">
                     <img
                         src="https://d2zdpiztbgorvt.cloudfront.net/region1/br/293956/biz_photo/394459b035ce4205a0ddb43a053874-barbearia-barba-negra-biz-photo-567f5ccdfb0a401690edd11f14ad92-booksy.jpeg"
@@ -257,11 +246,8 @@ const LoginWithShowcase = () => {
                 <section className="p-4">
                     <h2 className="text-xl font-bold mb-2">Nossos Cortes</h2>
                     <p className="mb-4 text-gray-600 max-w-md">Confira alguns dos cortes que oferecemos...</p>
-
                     <div className="flex overflow-x-auto gap-4 pb-4">
-                        {haircuts.length === 0 && (
-                            <p className="text-gray-500 whitespace-nowrap">Carregando cortes...</p>
-                        )}
+                        {haircuts.length === 0 && <p className="text-gray-500 whitespace-nowrap">Carregando cortes...</p>}
                         {haircuts.map((h) => (
                             <div
                                 key={h.id}
@@ -283,30 +269,15 @@ const LoginWithShowcase = () => {
                     </div>
                 </section>
 
-                {/* Formulário */}
                 <div className="flex flex-col justify-center items-center p-6">
                     <div className="w-full max-w-md">
-                        <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">
-                            Bem-vindo de volta
-                        </h2>
-
-                        {error && (
-                            <p className="text-red-600 text-center mb-4 font-semibold">{error}</p>
-                        )}
-                        {successMessage && (
-                            <p className="text-green-600 text-center mb-4 font-semibold">
-                                {successMessage}
-                            </p>
-                        )}
+                        <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">Bem-vindo de volta</h2>
+                        {error && <p className="text-red-600 text-center mb-4 font-semibold">{error}</p>}
+                        {successMessage && <p className="text-green-600 text-center mb-4 font-semibold">{successMessage}</p>}
 
                         <form className="space-y-6" onSubmit={handleSubmit}>
                             <div>
-                                <label
-                                    htmlFor="email"
-                                    className="block text-gray-700 font-semibold mb-2"
-                                >
-                                    E-mail
-                                </label>
+                                <label htmlFor="email" className="block text-gray-700 font-semibold mb-2">E-mail</label>
                                 <input
                                     type="email"
                                     id="email"
@@ -320,12 +291,7 @@ const LoginWithShowcase = () => {
                             </div>
 
                             <div>
-                                <label
-                                    htmlFor="password"
-                                    className="block text-gray-700 font-semibold mb-2"
-                                >
-                                    Senha
-                                </label>
+                                <label htmlFor="password" className="block text-gray-700 font-semibold mb-2">Senha</label>
                                 <input
                                     type="password"
                                     id="password"
@@ -352,27 +318,18 @@ const LoginWithShowcase = () => {
                                 onClick={handleGoogleLogin}
                                 className="w-full flex items-center justify-center gap-2 border border-blue-600 rounded-lg px-4 py-2 text-blue-600 bg-white hover:bg-blue-600 hover:text-white transition"
                             >
-                                <FcGoogle size={24} />
-                                Entrar com Google
+                                <FcGoogle size={24} /> Entrar com Google
                             </button>
                         </div>
 
                         <p className="mt-6 text-center text-sm text-gray-600">
-                            Não tem uma conta?{" "}
-                            <Link
-                                to="/registration"
-                                className="text-indigo-600 font-semibold hover:underline"
-                            >
-                                Cadastre-se
-                            </Link>
+                            Não tem uma conta? <Link to="/registration" className="text-indigo-600 font-semibold hover:underline">Cadastre-se</Link>
                         </p>
                     </div>
                 </div>
             </div>
         </div>
-
     );
-
 };
 
 export default LoginWithShowcase;
