@@ -8,7 +8,7 @@ interface UpdateFeedbackProps {
     userFeedback: IFeedback | null; // feedback do usuário
 }
 
-const UpdateFeedback = ({ barberId, onClose, userFeedback }: UpdateFeedbackProps) => {
+const UpdateFeedback = ({ barberId: _, onClose, userFeedback }: UpdateFeedbackProps) => {
     const [comment, setComment] = useState(userFeedback?.comment ?? "");
     const [rating, setRating] = useState(userFeedback?.rating ?? 0);
     const [error, setError] = useState("");
