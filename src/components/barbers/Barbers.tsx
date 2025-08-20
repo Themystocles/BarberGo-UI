@@ -18,7 +18,6 @@ const Barbers = () => {
     const [selectedBarberId, setSelectedBarberId] = useState<number | null>(null);
     const [isEditing, setIsEditing] = useState(false);
 
-    const [currentUserId, setCurrentUserId] = useState<number | null>(null);
     const [currentUserName, setCurrentUserName] = useState<string | null>(null);
 
     const { customization } = useContext(CustomizationContext);
@@ -34,7 +33,6 @@ const Barbers = () => {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
-                setCurrentUserId(res.data.id);
                 setCurrentUserName(res.data.name);
             } catch (err) {
                 console.error("Erro ao buscar usuário logado:", err);
@@ -77,8 +75,6 @@ const Barbers = () => {
                         );
 
                         commentsMap[barber.id] = res.data;
-
-                        // Feedback do usuário
                         const myFeedback = res.data.find(fb => fb.appUserName === currentUserName) || null;
                         userFeedbackMap[barber.id] = myFeedback;
                     } catch (err) {
@@ -113,7 +109,6 @@ const Barbers = () => {
         setIsModalOpen(true);
     };
 
-    // Render
     return (
         <>
             <Header />
