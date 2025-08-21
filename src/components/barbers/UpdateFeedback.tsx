@@ -5,7 +5,7 @@ import { IFeedback } from "../../interfaces/IFeedback";
 interface UpdateFeedbackProps {
     barberId: number;
     onClose: () => void;
-    userFeedback: IFeedback | null; // feedback do usuário
+    userFeedback: IFeedback | null;
 }
 
 const UpdateFeedback = ({ barberId: _, onClose, userFeedback }: UpdateFeedbackProps) => {
@@ -35,8 +35,8 @@ const UpdateFeedback = ({ barberId: _, onClose, userFeedback }: UpdateFeedbackPr
                 `https://barbergo-api.onrender.com/api/Feedback/update-feedback/${userFeedback.id}`,
                 {
                     id: userFeedback.id,
-                    appUserName: userFeedback.appUserName, // nome do usuário
-                    barberName: userFeedback.barberName,   // nome do barbeiro
+                    appUserName: userFeedback.appUserName,
+                    barberName: userFeedback.barberName,
                     comment,
                     rating,
                 },
@@ -55,8 +55,29 @@ const UpdateFeedback = ({ barberId: _, onClose, userFeedback }: UpdateFeedbackPr
             } else {
                 setError("Erro inesperado. Tente novamente.");
             }
+
         }
+
     };
+    const removeComent = () => {
+        if (userFeedback) {
+            try {
+                const token = localStorage.getItem("token");
+                axios.delete(
+                    `https://barbergo-api.onrender.com/api/Feedback/delete/${userFeedback.id}`,
+
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+                alert("Feedback Deletado com sucesso!");
+
+            } catch {
+                alert("Erro ao excluir comentário");
+
+            }
+
+        }
+
+    }
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -93,8 +114,14 @@ const UpdateFeedback = ({ barberId: _, onClose, userFeedback }: UpdateFeedbackPr
                         Cancelar
                     </button>
                     <button
+                        onClick={removeComent}
+                        className="px-4 py-2 bg-red-300 dark:bg-red-600 text-gray-900 dark:text-white rounded-md hover:bg-red-400 dark:hover:bg-red-500 transition"
+                    >
+                        Deletar Comentário
+                    </button>
+                    <button
                         onClick={updateFeedback}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition"
                     >
                         Atualizar
                     </button>
