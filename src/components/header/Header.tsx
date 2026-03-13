@@ -5,177 +5,199 @@ import { useUserContext } from "../../context/UserContext";
 import { CustomizationContext } from "../../context/CustomizationContext";
 
 const Header = () => {
-    const { logoutUser } = useUserContext();
+    const { logoutUser, user, loading } = useUserContext();
     const navigate = useNavigate();
-    const { user, loading } = useUserContext();
 
-    const { customization, loading: loadingCustomization } = useContext(CustomizationContext);
+    const { customization, loading: loadingCustomization } =
+        useContext(CustomizationContext);
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
+    const hexToRGBA = (hex: string, alpha: number) => {
+        if (!hex) return `rgba(17,24,39,${alpha})`;
+
+        const r = parseInt(hex.substring(1, 3), 16);
+        const g = parseInt(hex.substring(3, 5), 16);
+        const b = parseInt(hex.substring(5, 7), 16);
+
+        return `rgba(${r},${g},${b},${alpha})`;
+    };
+
+    const headerColor = customization?.corPrimaria
+        ? hexToRGBA(customization.corPrimaria, 0.85)
+        : "rgba(17,24,39,0.85)";
+
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(e.target as Node)
+            ) {
                 setDropdownOpen(false);
             }
         };
+
         document.addEventListener("mousedown", handleClickOutside);
+
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
     if (loading || loadingCustomization) {
         return (
             <header
-                className="flex justify-between items-center px-4 md:px-8 py-4 text-white shadow-md bg-opacity-90"
-                style={{ backgroundColor: customization?.corPrimaria || "#111827" }}
+                className="sticky top-0 z-50 backdrop-blur-xl border-b border-white/10 shadow-lg"
+                style={{ backgroundColor: headerColor }}
             >
-                <div className="text-white">Carregando...</div>
+                <div className="px-6 py-4 text-white">Carregando...</div>
             </header>
         );
     }
 
     return (
         <header
-            className="flex justify-between items-center px-4 md:px-8 py-4 text-white shadow-md bg-opacity-90"
-            style={{ backgroundColor: customization?.corPrimaria || "#111827" }}
+            className="sticky top-0 z-50 backdrop-blur-xl border-b border-white/10 shadow-xl"
+            style={{ backgroundColor: headerColor }}
         >
-            {/* Logo + Nome */}
-            <div
-                className="flex items-center gap-2 cursor-pointer hover:text-cyan-400 transition max-w-[60%]"
-                onClick={() => navigate("/Home")}
-            >
-                {customization?.logoUrl ? (
-                    <img
-                        src={customization.logoUrl}
-                        alt="Logo do sistema"
-                        className="h-10 object-contain rounded-md"
-                        style={{ maxHeight: "40px" }}
-                    />
-                ) : (
-                    <FaHome className="text-xl" />
-                )}
+            <div className="flex justify-between items-center px-4 md:px-8 py-3">
 
-                {/* Nome aparece só em telas sm para cima */}
-                <h1
-                    className={`hidden sm:block text-xl md:text-2xl font-bold whitespace-nowrap truncate`}
-                    style={{
-
-                        color: customization.corSecundaria
-                    }}
+                {/* Logo */}
+                <div
+                    className="flex items-center gap-3 cursor-pointer group"
+                    onClick={() => navigate("/Home")}
                 >
-                    {customization?.nomeSistema}
-                </h1>
-            </div>
+                    {customization?.logoUrl ? (
+                        <img
+                            src={customization.logoUrl}
+                            alt="Logo"
+                            className="h-10 rounded-md object-contain transition group-hover:scale-105"
+                        />
+                    ) : (
+                        <FaHome className="text-xl text-white/90 group-hover:text-white transition" />
+                    )}
 
-            {/* Perfil + Sair */}
-            <div className="flex items-center gap-4 relative" ref={dropdownRef}>
-                {user && (
-                    <div
-                        className="flex items-center gap-2 cursor-pointer"
-                        onClick={() => setDropdownOpen(!dropdownOpen)}
+                    <h1
+                        className="hidden sm:block text-xl md:text-2xl font-bold tracking-wide"
+                        style={{ color: customization?.corSecundaria }}
                     >
-                        {user.profilePictureUrl ? (
-                            <img
-                                src={user.profilePictureUrl}
-                                alt="Perfil"
-                                className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border-2 border-indigo-500 shadow"
-                            />
-                        ) : (
-                            <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-600 flex items-center justify-center text-sm text-white">
-                                {user.name.charAt(0)}
-                            </div>
-                        )}
-                        <span className="text-sm sm:text-base md:text-lg font-semibold text-indigo-400 max-w-[120px] truncate">
-                            Olá, {user.name}
-                        </span>
-                        <FaChevronDown className="text-white hover:text-indigo-300 transition" />
-                    </div>
-                )}
+                        {customization?.nomeSistema}
+                    </h1>
+                </div>
 
-                {/* Botão Sair (desktop) */}
-                <button
-                    onClick={() => {
-                        logoutUser();
-                        navigate("/login");
-                    }}
-                    className="hidden sm:flex items-center gap-2 bg-red-600 hover:bg-red-700 transition text-white px-3 py-1 rounded-md text-sm"
-                >
-                    <FaSignOutAlt /> Sair
-                </button>
-
-                {/* Dropdown */}
-                {dropdownOpen && (
-                    <div className="absolute right-0 top-12 bg-gray-800 text-white shadow-lg rounded-md py-2 w-48 z-50 border border-gray-700">
-                        <Link
-                            to="/agendamentos"
-                            className="block px-4 py-2 hover:bg-indigo-500 transition"
-                            onClick={() => setDropdownOpen(false)}
-                        >
-                            Agendar Corte
-                        </Link>
-
-                        {user?.type === 0 && (
-                            <Link
-                                to="/Barbeiros"
-                                className="block px-4 py-2 hover:bg-indigo-500 transition"
-                                onClick={() => setDropdownOpen(false)}
-                            >
-                                Barbeiros
-                            </Link>
-                        )}
-
-                        {user?.type === 1 && (
-                            <Link
-                                to="/Clientes_do_dia"
-                                className="block px-4 py-2 hover:bg-indigo-500 transition"
-                                onClick={() => setDropdownOpen(false)}
-                            >
-                                Clientes
-                            </Link>
-                        )}
-
-                        <Link
-                            to="/perfil"
-                            className="block px-4 py-2 hover:bg-indigo-500 transition"
-                            onClick={() => setDropdownOpen(false)}
-                        >
-                            Perfil
-                        </Link>
-
-                        {user?.type === 1 && (
-                            <Link
-                                to="/AgendaSemanal"
-                                className="block px-4 py-2 hover:bg-indigo-500 transition"
-                                onClick={() => setDropdownOpen(false)}
-                            >
-                                Administração
-                            </Link>
-                        )}
-                        {user?.type === 1 && (
-                            <Link
-                                to="/SystemCustomization"
-                                className="block px-4 py-2 hover:bg-indigo-500 transition"
-                                onClick={() => setDropdownOpen(false)}
-                            >
-                                Estilos
-                            </Link>
-                        )}
-
-                        {/* Sair (mobile) */}
+                {/* Perfil */}
+                <div className="flex items-center gap-4 relative" ref={dropdownRef}>
+                    {user && (
                         <div
-                            onClick={() => {
-                                logoutUser();
-                                navigate("/login");
-                            }}
-                            className="block px-4 py-2 hover:bg-red-500 transition cursor-pointer sm:hidden"
+                            className="flex items-center gap-3 cursor-pointer bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-full transition"
+                            onClick={() => setDropdownOpen(!dropdownOpen)}
                         >
-                            <div className="flex items-center gap-2">
-                                <FaSignOutAlt /> Sair
+                            {user.profilePictureUrl ? (
+                                <img
+                                    src={user.profilePictureUrl}
+                                    alt="Perfil"
+                                    className="w-9 h-9 rounded-full object-cover border border-white/20"
+                                />
+                            ) : (
+                                <div className="w-9 h-9 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-sm font-bold text-white">
+                                    {user.name.charAt(0)}
+                                </div>
+                            )}
+
+                            <span className="hidden md:block text-sm text-white/90 font-medium">
+                                {user.name}
+                            </span>
+
+                            <FaChevronDown className="text-white/70 text-xs" />
+                        </div>
+                    )}
+
+                    {/* botão sair */}
+                    <button
+                        onClick={() => {
+                            logoutUser();
+                            navigate("/login");
+                        }}
+                        className="hidden sm:flex items-center gap-2 bg-red-500/90 hover:bg-red-600 text-white px-4 py-1.5 rounded-full text-sm shadow-md transition"
+                    >
+                        <FaSignOutAlt />
+                        Sair
+                    </button>
+
+                    {/* Dropdown */}
+                    {dropdownOpen && (
+                        <div className="absolute right-0 top-14 w-56 bg-gray-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl py-2 animate-fadeIn">
+
+                            <Link
+                                to="/agendamentos"
+                                className="block px-4 py-2 hover:bg-white/10 transition"
+                                onClick={() => setDropdownOpen(false)}
+                            >
+                                Agendar Corte
+                            </Link>
+
+                            {user?.type === 0 && (
+                                <Link
+                                    to="/Barbeiros"
+                                    className="block px-4 py-2 hover:bg-white/10 transition"
+                                    onClick={() => setDropdownOpen(false)}
+                                >
+                                    Barbeiros
+                                </Link>
+                            )}
+
+                            {user?.type === 1 && (
+                                <Link
+                                    to="/Clientes_do_dia"
+                                    className="block px-4 py-2 hover:bg-white/10 transition"
+                                    onClick={() => setDropdownOpen(false)}
+                                >
+                                    Clientes
+                                </Link>
+                            )}
+
+                            <Link
+                                to="/perfil"
+                                className="block px-4 py-2 hover:bg-white/10 transition"
+                                onClick={() => setDropdownOpen(false)}
+                            >
+                                Perfil
+                            </Link>
+
+                            {user?.type === 1 && (
+                                <Link
+                                    to="/AgendaSemanal"
+                                    className="block px-4 py-2 hover:bg-white/10 transition"
+                                    onClick={() => setDropdownOpen(false)}
+                                >
+                                    Administração
+                                </Link>
+                            )}
+
+                            {user?.type === 1 && (
+                                <Link
+                                    to="/SystemCustomization"
+                                    className="block px-4 py-2 hover:bg-white/10 transition"
+                                    onClick={() => setDropdownOpen(false)}
+                                >
+                                    Estilos
+                                </Link>
+                            )}
+
+                            <div
+                                onClick={() => {
+                                    logoutUser();
+                                    navigate("/login");
+                                }}
+                                className="sm:hidden px-4 py-2 hover:bg-red-500 cursor-pointer"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <FaSignOutAlt />
+                                    Sair
+                                </div>
                             </div>
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
         </header>
     );
