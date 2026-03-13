@@ -1,27 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useUserContext } from "../../context/UserContext";
+import { CustomizationContext } from "../../context/CustomizationContext";
 import { useNavigate, Link } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import axios from "axios";
 import { Haircut } from "../../interfaces/Haircut";
 
-const LoginWithShowcase = () => {
+const LoginResponsive = () => {
     const { login, error, successMessage } = useAuth();
     const { refreshUser } = useUserContext();
+    const { customization } = useContext(CustomizationContext);
     const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [haircuts, setHaircuts] = useState<Haircut[]>([]);
-
-    useEffect(() => {
-        document.body.style.overflow = "hidden";
-        return () => {
-            document.body.style.overflow = "";
-        };
-    }, []);
 
     useEffect(() => {
         const fetchHaircuts = async () => {
@@ -57,10 +52,9 @@ const LoginWithShowcase = () => {
         const height = 600;
         const left = window.innerWidth / 2 - width / 2;
         const top = window.innerHeight / 2 - height / 2;
-
         const popup = window.open(
             googleLoginUrl,
-            "Login com Google",
+            "Login Google",
             `width=${width},height=${height},top=${top},left=${left}`
         );
 
@@ -71,343 +65,146 @@ const LoginWithShowcase = () => {
                 if (token) {
                     refreshUser();
                     navigate("/home");
-                } else {
-                    alert("Falha no login com Google");
                 }
             }
         }, 500);
     };
 
-    const renderHaircutCarousel = () => {
+    const renderHaircuts = () => {
         if (haircuts.length === 0) return <p className="text-gray-300">Carregando cortes...</p>;
 
-        // Menos de 5 fotos → mostrar normal
-        if (haircuts.length < 5) {
-            return (
-                <div className="flex gap-4 flex-wrap">
-                    {haircuts.map((h) => (
-                        <div
-                            key={h.id}
-                            className="min-w-[120px] bg-gray-900 bg-opacity-70 rounded-lg overflow-hidden shadow-lg cursor-default"
-                            title={`${h.name} - R$ ${h.preco.toFixed(2)}`}
-                        >
-                            <img
-                                src={h.imagePath}
-                                alt={h.name}
-                                className="w-full h-32 object-cover"
-                                loading="lazy"
-                            />
-                            <div className="p-2 text-center">
-                                <h3 className="text-sm font-semibold truncate">{h.name}</h3>
-                                <p className="text-xs text-indigo-400">R$ {h.preco.toFixed(2)}</p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            );
-        }
-
-        // 5 ou mais fotos → carrossel contínuo
-        const loopHaircuts = [...haircuts, ...haircuts];
+        const loop = [...haircuts, ...haircuts];
 
         return (
-            <div className="overflow-hidden w-full relative">
-                <div className="flex whitespace-nowrap animate-marquee">
-                    {loopHaircuts.map((h, index) => (
+            <div className="overflow-hidden w-full mt-6">
+                <div className="flex gap-4 animate-scroll">
+                    {loop.map((h, index) => (
                         <div
                             key={index}
-                            className="inline-block min-w-[120px] bg-gray-900 bg-opacity-70 rounded-lg overflow-hidden shadow-lg cursor-default transform hover:scale-105 transition-transform mx-2"
+                            className="min-w-[140px] backdrop-blur-xl bg-white/10 border border-white/10 rounded-xl overflow-hidden shadow-lg hover:scale-105 transition"
                             title={`${h.name} - R$ ${h.preco.toFixed(2)}`}
                         >
-                            <img
-                                src={h.imagePath}
-                                alt={h.name}
-                                className="w-full h-32 object-cover"
-                                loading="lazy"
-                            />
+                            <img src={h.imagePath} alt={h.name} className="w-full h-32 object-cover" />
                             <div className="p-2 text-center">
                                 <h3 className="text-sm font-semibold truncate">{h.name}</h3>
-                                <p className="text-xs text-indigo-400">R$ {h.preco.toFixed(2)}</p>
+                                <p className="text-xs font-bold" style={{ color: customization?.corSecundaria }}>
+                                    R$ {h.preco.toFixed(2)}
+                                </p>
                             </div>
                         </div>
                     ))}
                 </div>
-
-                <style>
-                    {`
-            @keyframes marquee {
-              0% { transform: translateX(0); }
-              100% { transform: translateX(-50%); }
-            }
-            .animate-marquee {
-              display: flex;
-              animation: marquee 40s linear infinite;
-            }
-          `}
-                </style>
+                <style>{`
+          @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+          .animate-scroll {
+            animation: scroll 35s linear infinite;
+            display: flex;
+          }
+        `}</style>
             </div>
         );
     };
 
     return (
-        <div className="flex min-h-screen">
-            {/* Lado esquerdo desktop */}
-            <div className="relative hidden md:flex md:w-1/2 h-screen flex-col">
-                <img
-                    src="https://d2zdpiztbgorvt.cloudfront.net/region1/br/293956/biz_photo/394459b035ce4205a0ddb43a053874-barbearia-barba-negra-biz-photo-567f5ccdfb0a401690edd11f14ad92-booksy.jpeg"
-                    alt="Barbearia Barba Negra"
-                    className="absolute inset-0 w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-60"></div>
-                <div className="relative z-10 flex flex-col justify-between p-12 text-white w-full h-full">
-                    <div>
-                        <h1 className="text-4xl font-extrabold mb-6 drop-shadow-lg">Barbearia Barba Negra</h1>
-                        <p className="text-lg max-w-lg leading-relaxed drop-shadow mb-8">
-                            Ambiente acolhedor, profissionais experientes e os melhores cortes para realçar seu estilo.
-                            Explore nossos cortes abaixo e prepare-se para uma experiência única.
-                        </p>
-                    </div>
+        <div
+            className="min-h-screen w-full flex flex-col lg:flex-row bg-cover bg-center relative"
+            style={{ backgroundImage: `url(${customization?.backgroundUrl})` }}
+        >
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
 
-                    <div>
-                        <h2 className="text-3xl font-bold mb-4 drop-shadow">Nossos Cortes</h2>
-                        <p className="mb-6 max-w-md drop-shadow text-indigo-300">
-                            Confira alguns dos cortes que oferecemos e escolha seu favorito!
-                        </p>
-                        {renderHaircutCarousel()}
-                    </div>
-                </div>
+            {/* ShowCase */}
+            <div className="relative z-10 lg:w-2/3 flex flex-col justify-center items-center lg:items-start p-6 lg:p-16 text-white">
+                <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-center lg:text-left">
+                    <span className="text-white">Bem-vindo ao </span>
+                    <br className="lg:hidden" />
+                    <span style={{ color: customization?.corSecundaria }}>
+                        {customization?.nomeSistema || "BarbeGo"}
+                    </span>
+                </h1>
+
+                <p className="text-gray-300 mt-4 max-w-lg text-center lg:text-left text-lg">
+                    Gerencie clientes, agendamentos e serviços com um sistema moderno e eficiente para sua
+                    barbearia.
+                </p>
+
+                {renderHaircuts()}
             </div>
 
-            {/* Lado direito desktop (formulário) */}
-            <div className="hidden md:flex md:w-1/2 justify-center items-center bg-white min-h-screen p-8">
-                <div className="w-full max-w-md">
-                    <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">Bem-vindo de volta</h2>
-                    {error && <p className="text-red-600 text-center mb-4 font-semibold">{error}</p>}
-                    {successMessage && <p className="text-green-600 text-center mb-4 font-semibold">{successMessage}</p>}
+            {/* Login Card */}
+            <div className="relative z-10 lg:w-1/3 flex items-center justify-center p-6">
+                <div className="w-full max-w-md backdrop-blur-xl bg-white/10 border border-white/10 rounded-2xl shadow-2xl p-8 text-white">
+                    <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6">Bem-vindo de volta</h2>
 
-                    <form className="space-y-6" onSubmit={handleSubmit}>
-                        <div>
-                            <label htmlFor="email" className="block text-gray-700 font-semibold mb-2">E-mail</label>
-                            <input
-                                type="email"
-                                id="email"
-                                placeholder="Digite seu e-mail"
-                                className="w-full p-3 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                required
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                autoComplete="username"
-                            />
-                        </div>
+                    {error && (
+                        <p className="text-red-400 text-center mb-3 font-semibold">{error}</p>
+                    )}
+                    {successMessage && (
+                        <p className="text-green-400 text-center mb-3 font-semibold">{successMessage}</p>
+                    )}
 
-                        <div>
-                            <label htmlFor="password" className="block text-gray-700 font-semibold mb-2">Senha</label>
-                            <input
-                                type="password"
-                                id="password"
-                                placeholder="Digite sua senha"
-                                className="w-full p-3 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                required
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                autoComplete="current-password"
-                            />
-                        </div>
-
+                    <form className="space-y-4" onSubmit={handleSubmit}>
+                        <input
+                            type="email"
+                            placeholder="Digite seu e-mail"
+                            className="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                        <input
+                            type="password"
+                            placeholder="Digite sua senha"
+                            className="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition disabled:opacity-50"
+                            className="w-full py-3 rounded-lg font-semibold transition hover:scale-[1.02]"
+                            style={{ backgroundColor: customization?.corSecundaria }}
                         >
                             {isLoading ? "Entrando..." : "Entrar"}
                         </button>
                     </form>
 
-                    <div className="mt-6">
-                        <button
-                            onClick={handleGoogleLogin}
-                            className="w-full flex items-center justify-center gap-2 border border-blue-600 rounded-lg px-4 py-2 text-blue-600 bg-white hover:bg-blue-600 hover:text-white transition"
-                        >
-                            <FcGoogle size={24} /> Entrar com Google
-                        </button>
-                    </div>
+                    <button
+                        onClick={handleGoogleLogin}
+                        className="mt-4 w-full flex items-center justify-center gap-3 border border-white/20 rounded-lg p-3 text-white hover:bg-white/10 transition"
+                    >
+                        <FcGoogle size={22} /> Entrar com Google
+                    </button>
 
-                    <p className="mt-6 text-center text-sm text-gray-600">
-                        Não tem uma conta? <Link to="/registration" className="text-indigo-600 font-semibold hover:underline">Cadastre-se</Link>
-                    </p>
-                    <p className="mt-6 text-center text-sm text-gray-600">
-                        Esqueceu a senha? <Link to="/Recuperar-Senha" className="text-indigo-600 font-semibold hover:underline">Clique aqui</Link>
-                    </p>
-                </div>
-            </div>
-
-            {/* === Versão mobile - carrossel contínuo + formulário === */}
-            <div className="md:hidden w-full bg-white flex flex-col min-h-screen overflow-y-scroll">
-
-                {/* Imagem e resumo */}
-                <div className="relative h-64 w-full">
-                    <img
-                        src="https://d2zdpiztbgorvt.cloudfront.net/region1/br/293956/biz_photo/394459b035ce4205a0ddb43a053874-barbearia-barba-negra-biz-photo-567f5ccdfb0a401690edd11f14ad92-booksy.jpeg"
-                        alt="Barbearia Barba Negra"
-                        className="absolute inset-0 w-full h-full object-cover object-top"
-                    />
-                    <div className="absolute inset-0 bg-black bg-opacity-60"></div>
-                    <div className="relative z-10 p-4 text-white flex flex-col justify-center h-full">
-                        <h1 className="text-3xl font-bold drop-shadow mb-2">Barbearia Barba Negra</h1>
-                        <p className="text-sm drop-shadow max-w-xs leading-snug">
-                            Ambiente acolhedor, profissionais experientes e os melhores cortes para realçar seu estilo.
-                        </p>
-                    </div>
-                </div>
-
-                {/* Cortes */}
-                <section className="p-4">
-                    <h2 className="text-xl font-bold mb-2">Nossos Cortes</h2>
-                    <p className="mb-4 text-gray-600 max-w-md">Confira alguns dos cortes que oferecemos...</p>
-
-                    {haircuts.length >= 5 ? (
-                        <div className="overflow-hidden w-full relative">
-                            <div className="flex whitespace-nowrap animate-marquee-mobile">
-                                {[...haircuts, ...haircuts].map((h, index) => (
-                                    <div
-                                        key={index}
-                                        className="inline-block min-w-[120px] bg-gray-900 bg-opacity-70 rounded-lg overflow-hidden shadow-lg cursor-default transform hover:scale-105 transition-transform mx-2"
-                                        title={`${h.name} - R$ ${h.preco.toFixed(2)}`}
-                                    >
-                                        <img
-                                            src={h.imagePath}
-                                            alt={h.name}
-                                            className="w-full h-24 object-cover"
-                                            loading="lazy"
-                                        />
-                                        <div className="p-2 text-center">
-                                            <h3 className="text-sm font-semibold truncate">{h.name}</h3>
-                                            <p className="text-xs text-indigo-400">R$ {h.preco.toFixed(2)}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-
-                            <style>
-                                {`
-            @keyframes marquee-mobile {
-              0% { transform: translateX(0); }
-              100% { transform: translateX(-50%); }
-            }
-            .animate-marquee-mobile {
-              display: flex;
-              animation: marquee-mobile 40s linear infinite;
-            }
-          `}
-                            </style>
-                        </div>
-                    ) : (
-                        <div className="flex gap-4 overflow-x-auto">
-                            {haircuts.map((h) => (
-                                <div
-                                    key={h.id}
-                                    className="min-w-[120px] bg-gray-100 rounded-lg overflow-hidden cursor-default shadow-md flex-shrink-0"
-                                    title={`${h.name} - R$ ${h.preco.toFixed(2)}`}
-                                >
-                                    <img
-                                        src={h.imagePath}
-                                        alt={h.name}
-                                        className="w-full h-24 object-cover"
-                                        loading="lazy"
-                                    />
-                                    <div className="p-2 text-center">
-                                        <h3 className="text-sm font-semibold truncate">{h.name}</h3>
-                                        <p className="text-xs text-indigo-600">R$ {h.preco.toFixed(2)}</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </section>
-
-                {/* Formulário */}
-                <div className="flex flex-col justify-center items-center p-6">
-                    <div className="w-full max-w-md">
-                        <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">
-                            Bem-vindo de volta
-                        </h2>
-
-                        {error && (
-                            <p className="text-red-600 text-center mb-4 font-semibold">{error}</p>
-                        )}
-                        {successMessage && (
-                            <p className="text-green-600 text-center mb-4 font-semibold">
-                                {successMessage}
-                            </p>
-                        )}
-
-                        <form className="space-y-6" onSubmit={handleSubmit}>
-                            <div>
-                                <label htmlFor="email" className="block text-gray-700 font-semibold mb-2">
-                                    E-mail
-                                </label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    placeholder="Digite seu e-mail"
-                                    className="w-full p-3 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                    required
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    autoComplete="username"
-                                />
-                            </div>
-
-                            <div>
-                                <label htmlFor="password" className="block text-gray-700 font-semibold mb-2">
-                                    Senha
-                                </label>
-                                <input
-                                    type="password"
-                                    id="password"
-                                    placeholder="Digite sua senha"
-                                    className="w-full p-3 border-2 border-gray-300 rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                    required
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    autoComplete="current-password"
-                                />
-                            </div>
-
-                            <button
-                                type="submit"
-                                disabled={isLoading}
-                                className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition disabled:opacity-50"
-                            >
-                                {isLoading ? "Entrando..." : "Entrar"}
-                            </button>
-                        </form>
-
-                        <div className="mt-6">
-                            <button
-                                onClick={handleGoogleLogin}
-                                className="w-full flex items-center justify-center gap-2 border border-blue-600 rounded-lg px-4 py-2 text-blue-600 bg-white hover:bg-blue-600 hover:text-white transition"
-                            >
-                                <FcGoogle size={24} />
-                                Entrar com Google
-                            </button>
-                        </div>
-
-                        <p className="mt-6 text-center text-sm text-gray-600">
-                            Não tem uma conta?{" "}
+                    <div className="text-center mt-4 text-sm text-gray-300">
+                        <p>
+                            Não tem conta?{" "}
                             <Link
                                 to="/registration"
-                                className="text-indigo-600 font-semibold hover:underline"
+                                className="font-semibold"
+                                style={{ color: customization?.corSecundaria }}
                             >
                                 Cadastre-se
+                            </Link>
+                        </p>
+                        <p className="mt-1">
+                            Esqueceu a senha?{" "}
+                            <Link
+                                to="/Recuperar-Senha"
+                                className="font-semibold"
+                                style={{ color: customization?.corSecundaria }}
+                            >
+                                Recuperar senha
                             </Link>
                         </p>
                     </div>
                 </div>
             </div>
         </div>
-
     );
 };
 
-export default LoginWithShowcase;
+export default LoginResponsive;
