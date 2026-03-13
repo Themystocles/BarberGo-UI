@@ -23,6 +23,14 @@ const Appointment = () => {
 
     const selectedBarber = barbersList.find((b) => b.id === barber);
 
+    // Função para formatar data no padrão YYYY-MM-DD (local)
+    const formatDateLocal = (date: Date) => {
+        const ano = date.getFullYear();
+        const mes = String(date.getMonth() + 1).padStart(2, "0");
+        const dia = String(date.getDate()).padStart(2, "0");
+        return `${ano}-${mes}-${dia}`;
+    };
+
     // Gera 14 dias a partir de hoje
     useEffect(() => {
         const tempDates: Date[] = [];
@@ -62,11 +70,11 @@ const Appointment = () => {
                 setLoading(true);
                 const token = localStorage.getItem("token");
 
-                // Horários disponíveis
+                // Horários disponíveis usando data local
                 const res = await axios.get(
-                    `https://barbergo-api.onrender.com/api/WeeklySchedule/available-slots?date=${selectedDate
-                        .toISOString()
-                        .split("T")[0]}&barberId=${barber}`,
+                    `https://barbergo-api.onrender.com/api/WeeklySchedule/available-slots?date=${formatDateLocal(
+                        selectedDate
+                    )}&barberId=${barber}`,
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
 
@@ -88,11 +96,7 @@ const Appointment = () => {
 
     // Função para confirmar horário
     const handleHorarioClick = (horario: string) => {
-        // Construindo data local (evita UTC)
-        const ano = selectedDate.getFullYear();
-        const mes = String(selectedDate.getMonth() + 1).padStart(2, "0");
-        const dia = String(selectedDate.getDate()).padStart(2, "0");
-        const dataHoraCompleta = `${ano}-${mes}-${dia}T${horario}`;
+        const dataHoraCompleta = `${formatDateLocal(selectedDate)}T${horario}`;
 
         navigate("/ConfirmarHorario", {
             state: {
